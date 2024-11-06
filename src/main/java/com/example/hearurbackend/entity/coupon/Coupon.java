@@ -43,7 +43,7 @@ public class Coupon {
     }
     // 기타 Getter 및 Setter
 
-    public void makeCoupon(String code, LocalDateTime expirationDate){
+    public Coupon(String code, LocalDateTime expirationDate){
         this.code = code;
         this.expirationDate = expirationDate;
     }

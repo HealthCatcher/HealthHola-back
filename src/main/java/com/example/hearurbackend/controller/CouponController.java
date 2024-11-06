@@ -2,7 +2,6 @@ package com.example.hearurbackend.controller;
 
 import com.example.hearurbackend.dto.coupon.CouponRequestDto;
 import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
-import com.example.hearurbackend.repository.CouponRepository;
 import com.example.hearurbackend.service.CouponService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -28,10 +27,18 @@ public class CouponController {
     public void addCoupon(
             @AuthenticationPrincipal CustomOAuth2User auth,
             @RequestBody CouponRequestDto couponDto) {
-        if(auth.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+        if (auth.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             throw new IllegalStateException("권한이 없습니다.");
         }
 
-        couponService.addCoupon(couponDto.getCode(), couponDto.getExpirationDate());
+        couponService.addCoupon(auth, couponDto.getCode(), couponDto.getExpirationDate());
+    }
+
+    @Operation(summary = "쿠폰 삭제")
+    @DeleteMapping("/{coupon_code}")
+    public void deleteCoupon(
+            @PathVariable String coupon_code,
+            @AuthenticationPrincipal CustomOAuth2User auth) {
+        couponService.deleteCoupon(auth, coupon_code);
     }
 }
