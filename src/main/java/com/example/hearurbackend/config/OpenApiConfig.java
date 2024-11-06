@@ -13,9 +13,9 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI openAPI() {
         Info info = new Info()
-                .title("swagger 테스트")
+                .title("HealthHola 백엔드 API")
                 .version("1.0")
-                .description("API에 대한 설명 부분");
+                .description("구현중");
         String jwt = "JWT";
         SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwt); // 헤더에 토큰 포함
         Components components = new Components().addSecuritySchemes(jwt, new SecurityScheme()
