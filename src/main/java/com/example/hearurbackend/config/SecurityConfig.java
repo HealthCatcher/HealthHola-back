@@ -59,12 +59,29 @@ public class SecurityConfig {
 
                     CorsConfiguration configuration = new CorsConfiguration();
 
-                    configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
-                    configuration.setAllowedMethods(Collections.singletonList("*"));
+                    // Origin을 올바르게 설정
+                    configuration.setAllowedOrigins(Arrays.asList("http://localhost:8081", "http://localhost:3000"));
+
+                    // HTTP 메서드를 올바르게 설정
+                    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
                     configuration.setAllowCredentials(true);
-                    configuration.setAllowedHeaders(Collections.singletonList("*"));
+
+                    // Allowed headers 설정
+                    configuration.setAllowedHeaders(Arrays.asList(
+                            "Origin",
+                            "Accept",
+                            "X-Requested-With",
+                            "Content-Type",
+                            "Access-Control-Request-Method",
+                            "Access-Control-Request-Headers",
+                            "Authorization"
+                    ));
+
+                    // MaxAge 설정
                     configuration.setMaxAge(3600L);
 
+                    // Exposed headers 설정
                     List<String> exposedHeaders = Arrays.asList("Set-Cookie", "Authorization", "Location");
                     configuration.setExposedHeaders(exposedHeaders);
 
