@@ -15,8 +15,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.MimeTypeUtils;
 
+import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
@@ -54,7 +57,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
 
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         String username = customUserDetails.getUsername();
@@ -67,6 +70,15 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String token = jwtUtil.createJwt(username, role, 60 * 60 * 1000 * 10L);
 
         response.addHeader("Authorization", "Bearer " + token);
+
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("username", username);
+        responseBody.put("role", role);
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        objectMapper.writeValue(response.getWriter(), responseBody);
     }
 
     @Override
