@@ -4,6 +4,7 @@ import com.example.hearurbackend.entity.user.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.UUID;
 
 @Getter
 @Entity
+@NoArgsConstructor
 public class Notice {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -53,6 +55,8 @@ public class Notice {
         this.price = price;
         this.option = option;
     }
+
+
 
     public void updateNotice(String newTitle, String newContent) {
         this.title = newTitle;
