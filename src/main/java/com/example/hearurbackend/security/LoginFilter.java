@@ -68,12 +68,17 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         String role = auth.getAuthority();
         String token = jwtUtil.createJwt(username, role, 60 * 60 * 1000 * 10L);
+        String userPoint = String.valueOf(customUserDetails.getUserPoint());
+        String nickname = customUserDetails.getNickname();
 
         response.addHeader("Authorization", "Bearer " + token);
 
         Map<String, Object> responseBody = new HashMap<>();
+
         responseBody.put("username", username);
+        responseBody.put("nickname", nickname);
         responseBody.put("role", role);
+        responseBody.put("point", userPoint);
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");

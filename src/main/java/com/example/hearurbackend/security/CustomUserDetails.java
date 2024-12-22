@@ -52,4 +52,11 @@ public class CustomUserDetails implements UserDetails {
         return true;
     }
 
+    public String getNickname() {
+        return user.getNickname();
+    }
+
+    public int getUserPoint() {
+        return user.getPoint();
+    }
 }

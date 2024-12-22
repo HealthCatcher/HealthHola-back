@@ -35,6 +35,7 @@ public class User {
     private Integer age;
 
     private String gender;
+    private int point;
 
     @OneToMany(mappedBy = "user")
     private List<Post> posts = new ArrayList<>();
@@ -70,6 +71,7 @@ public class User {
         this.email = email;
         this.role = role;
         this.nickname = name;
+        this.point = 0;
     }
 
     public void createOAuthUser(String username, String email, String name, UserRole role) {
@@ -78,6 +80,7 @@ public class User {
         this.name = name;
         this.role = role;
         this.nickname = name;
+        this.point = 0;
     }
 
     public void updateOAuthUser(String email, String name) {
