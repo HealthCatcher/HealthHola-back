@@ -58,4 +58,8 @@ public class Post {
     public int getLikesCount() {
         return likes.size();
     }
+
+    public int getCommentsCount() {
+        return comments.size();
+    }
 }

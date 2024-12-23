@@ -20,9 +20,10 @@ public class PostResponseDto {
     private final List<CommentResponseDto> comments;
     private final int views;
     private final int likes;
+    private final int commentsCount;
 
     @Builder
-    public PostResponseDto(Long no, String category, String title, String content, String author, LocalDateTime createDate, LocalDateTime updateDate, boolean isUpdated, List<CommentResponseDto> comments, int views, int likes) {
+    public PostResponseDto(Long no, String category, String title, String content, String author, LocalDateTime createDate, LocalDateTime updateDate, boolean isUpdated, List<CommentResponseDto> comments, int views, int likes, int commentsCount) {
         this.no = no;
         this.category = category;
         this.title = title;
@@ -34,5 +35,6 @@ public class PostResponseDto {
         this.comments = comments;
         this.views = views;
         this.likes = likes;
+        this.commentsCount = commentsCount;
     }
 }

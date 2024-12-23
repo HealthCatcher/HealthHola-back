@@ -41,6 +41,7 @@ public class PostService {
                             .createDate(post.getCreateDate())
                             .views(post.getViews())
                             .likes(post.getLikesCount())
+                            .commentsCount(post.getCommentsCount())
                             .build();
                 })
                 .collect(Collectors.toList());
