@@ -8,9 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Entity
@@ -43,7 +41,7 @@ public class Notice {
             joinColumns = @JoinColumn(name = "experience_id"),
             inverseJoinColumns = @JoinColumn(name = "username")
     )
-    private List<User> participants = new ArrayList<>();
+    private Set<User> participants = new HashSet<>();
     @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Report> reports = new ArrayList<>();
 
