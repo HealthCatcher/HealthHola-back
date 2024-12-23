@@ -1,10 +1,12 @@
 package com.example.hearurbackend.entity.community;
 
+import com.example.hearurbackend.entity.Report;
 import com.example.hearurbackend.entity.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,6 +34,9 @@ public class Post {
 
     @OneToMany
     private Set<Like> likes = new HashSet<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Report> reports = new ArrayList<>();
 
     @Builder
     public Post(String category, String title, String content, String author, LocalDateTime createDate, LocalDateTime updateDate, boolean isUpdated) {
