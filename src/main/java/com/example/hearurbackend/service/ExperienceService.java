@@ -33,6 +33,7 @@ public class ExperienceService {
                             .category(notice.getCategory())
                             .title(notice.getTitle())
                             .author(authorNickname)
+                            .content(notice.getContent())
                             .createDate(notice.getCreateDate())
                             .startDate(notice.getStartDate())
                             .endDate(notice.getEndDate())
