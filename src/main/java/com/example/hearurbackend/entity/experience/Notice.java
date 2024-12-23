@@ -62,4 +62,12 @@ public class Notice {
         this.title = newTitle;
         this.content = newContent;
     }
+
+    public void addParticipant(User user) {
+        participants.add(user);
+    }
+
+    public void removeParticipant(User user) {
+        participants.remove(user);
+    }
 }

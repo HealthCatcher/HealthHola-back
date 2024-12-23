@@ -99,4 +99,28 @@ public class ExperienceService {
         }
         experienceNoticeRepository.delete(notice);
     }
+
+    public void applyNotice(UUID noticeId, String username) {
+        Notice notice = experienceNoticeRepository.findById(noticeId).orElseThrow(
+                () -> new EntityNotFoundException("Post not found with id: " + noticeId));
+        User user = userService.getUser(username).orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
+        notice.addParticipant(user);
+        experienceNoticeRepository.save(notice);
+    }
+
+    public void cancelApplyNotice(UUID noticeId, String username) {
+        Notice notice = experienceNoticeRepository.findById(noticeId).orElseThrow(
+                () -> new EntityNotFoundException("Post not found with id: " + noticeId));
+        User user = userService.getUser(username).orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
+        notice.removeParticipant(user);
+        experienceNoticeRepository.save(notice);
+    }
+
+    public List<String> getParticipants(UUID noticeId) {
+        Notice notice = experienceNoticeRepository.findById(noticeId).orElseThrow(
+                () -> new EntityNotFoundException("Post not found with id: " + noticeId));
+        return notice.getParticipants().stream()
+                .map(User::getUsername)
+                .collect(Collectors.toList());
+    }
 }

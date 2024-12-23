@@ -55,7 +55,7 @@ public class ExperienceController {
         return ResponseEntity.created(location).build();
     }
 
-    @Operation(summary = "게시글 수정")
+    @Operation(summary = "체험단 공고 수정")
     @PutMapping("/notice/{noticeId}")
     public ResponseEntity<Void> updatePost(
             @PathVariable UUID noticeId,
@@ -66,7 +66,7 @@ public class ExperienceController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "게시글 삭제")
+    @Operation(summary = "체험단 공고 삭제")
     @DeleteMapping("/notice/{noticeId}")
     public ResponseEntity<Void> deletePost(
             @PathVariable UUID noticeId,
@@ -74,5 +74,34 @@ public class ExperienceController {
     ) {
         experienceService.deleteNotice(noticeId, auth.getUsername());
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "체험단 참가 신청")
+    @PostMapping("/notice/{noticeId}/apply")
+    public ResponseEntity<Void> applyNotice(
+            @PathVariable UUID noticeId,
+            @AuthenticationPrincipal CustomOAuth2User auth
+    ) {
+        experienceService.applyNotice(noticeId, auth.getUsername());
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "체험단 참가 신청 취소")
+    @DeleteMapping("/notice/{noticeId}/apply")
+    public ResponseEntity<Void> cancelApplyNotice(
+            @PathVariable UUID noticeId,
+            @AuthenticationPrincipal CustomOAuth2User auth
+    ) {
+        experienceService.cancelApplyNotice(noticeId, auth.getUsername());
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "체험단 참여자 목록 조회")
+    @GetMapping("/notice/{noticeId}/participants")
+    public ResponseEntity<List<String>> getParticipants(
+            @PathVariable UUID noticeId
+    ) {
+        List<String> participants = experienceService.getParticipants(noticeId);
+        return ResponseEntity.ok(participants);
     }
 }
