@@ -30,7 +30,8 @@ public class Notice {
     private String company;
     private String content;
     private int price;
-    private String option;
+    private String campaignDetails;
+    private String instruction;
     @OneToMany(mappedBy = "experienceNotice", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
     @ManyToMany
@@ -42,7 +43,7 @@ public class Notice {
     private List<User> participants = new ArrayList<>();
 
     @Builder
-    public Notice(User author, String category, String title, String location, LocalDateTime createDate, LocalDateTime startDate, LocalDateTime endDate, String company, String content, int price, String option) {
+    public Notice(User author, String category, String title, String location, LocalDateTime createDate, LocalDateTime startDate, LocalDateTime endDate, String company, String content, int price, String campaignDetails, String instruction) {
         this.author = author;
         this.category = category;
         this.title = title;
@@ -53,7 +54,8 @@ public class Notice {
         this.company = company;
         this.content = content;
         this.price = price;
-        this.option = option;
+        this.campaignDetails = campaignDetails;
+        this.instruction = instruction;
     }
 
 

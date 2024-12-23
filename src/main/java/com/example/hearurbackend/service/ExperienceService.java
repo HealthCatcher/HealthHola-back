@@ -68,7 +68,7 @@ public class ExperienceService {
                 .build();
     }
 
-    public Notice createNotice(NoticeResponseDto noticeRequestDto, String username) {
+    public Notice createNotice(NoticeRequestDto noticeRequestDto, String username) {
         LocalDateTime now = LocalDateTime.now();
         Notice notice = Notice.builder()
                 .title(noticeRequestDto.getTitle())
@@ -77,6 +77,9 @@ public class ExperienceService {
                 .createDate(now)
                 .startDate(noticeRequestDto.getStartDate())
                 .endDate(noticeRequestDto.getEndDate())
+                .category(noticeRequestDto.getCategory())
+                .campaignDetails(noticeRequestDto.getCampaignDetails())
+                .instruction(noticeRequestDto.getInstruction())
                 .build();
         return experienceNoticeRepository.save(notice);
     }

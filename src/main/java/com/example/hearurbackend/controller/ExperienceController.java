@@ -3,7 +3,6 @@ package com.example.hearurbackend.controller;
 import com.example.hearurbackend.dto.experience.NoticeRequestDto;
 import com.example.hearurbackend.dto.experience.NoticeResponseDto;
 import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
-import com.example.hearurbackend.dto.post.PostRequestDto;
 import com.example.hearurbackend.entity.experience.Notice;
 import com.example.hearurbackend.service.ExperienceService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,7 +42,7 @@ public class ExperienceController {
     @PostMapping("/notice")
     public ResponseEntity<Void> createPost(
             @AuthenticationPrincipal CustomOAuth2User auth,
-            @RequestBody NoticeResponseDto noticeRequestDto
+            @RequestBody NoticeRequestDto noticeRequestDto
     ) {
         Notice newNotice = experienceService.createNotice(noticeRequestDto, auth.getUsername());
         String noticeId = newNotice.getId().toString();
