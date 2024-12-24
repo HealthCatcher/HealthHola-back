@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ExperienceService {
+public class NoticeService {
     private final ExperienceNoticeRepository experienceNoticeRepository;
     private final UserService userService;
     public List<NoticeResponseDto> getNoticeList() {
@@ -135,5 +135,10 @@ public class ExperienceService {
         return notice.getParticipants().stream()
                 .map(User::getUsername)
                 .collect(Collectors.toList());
+    }
+
+    public Notice getNotice(UUID noticeId) {
+        return experienceNoticeRepository.findById(noticeId).orElseThrow(
+                () -> new EntityNotFoundException("Post not found with id: " + noticeId));
     }
 }

@@ -38,6 +38,7 @@ public class Notice {
 
     @OneToMany(mappedBy = "experienceNotice", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
+
     @ManyToMany
     @JoinTable(
             name = "experience_participants",
@@ -45,6 +46,7 @@ public class Notice {
             inverseJoinColumns = @JoinColumn(name = "username")
     )
     private Set<User> participants = new HashSet<>();
+
     @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Report> reports = new ArrayList<>();
 

@@ -4,7 +4,7 @@ import com.example.hearurbackend.dto.experience.NoticeRequestDto;
 import com.example.hearurbackend.dto.experience.NoticeResponseDto;
 import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
 import com.example.hearurbackend.entity.experience.Notice;
-import com.example.hearurbackend.service.ExperienceService;
+import com.example.hearurbackend.service.NoticeService;
 import com.example.hearurbackend.service.S3Uploader;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -22,14 +22,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/experience")
-public class ExperienceController {
-    private final ExperienceService experienceService;
+public class NoticeController {
+    private final NoticeService noticeService;
     private final S3Uploader s3Uploader;
 
     @Operation(summary = "체험단 공고 목록 조회")
     @GetMapping("/notice")
     public ResponseEntity<List<NoticeResponseDto>> getNoticeList() {
-        List<NoticeResponseDto> noticeList = experienceService.getNoticeList();
+        List<NoticeResponseDto> noticeList = noticeService.getNoticeList();
         return ResponseEntity.ok(noticeList);
     }
 
@@ -38,7 +38,7 @@ public class ExperienceController {
     public ResponseEntity<NoticeResponseDto> getNoticeDetail(
             @PathVariable UUID noticeId
     ) {
-        NoticeResponseDto responseDTO = experienceService.getNoticeDetail(noticeId);
+        NoticeResponseDto responseDTO = noticeService.getNoticeDetail(noticeId);
         return ResponseEntity.ok(responseDTO);
     }
 
@@ -53,7 +53,7 @@ public class ExperienceController {
             // 파일 저장 로직 실행
             String fileName = s3Uploader.upload(imageFile, "HealthHola-Notice-Image"); // 예시 함수, 파일을 저장하고 파일 이름을 반환
         }
-        Notice newNotice = experienceService.createNotice(noticeRequestDto, auth.getUsername());
+        Notice newNotice = noticeService.createNotice(noticeRequestDto, auth.getUsername());
         String noticeId = newNotice.getId().toString();
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -70,7 +70,7 @@ public class ExperienceController {
             @AuthenticationPrincipal CustomOAuth2User auth,
             @RequestBody NoticeRequestDto noticeRequestDto
     ) {
-        experienceService.updateNotice(noticeId, noticeRequestDto, auth.getUsername());
+        noticeService.updateNotice(noticeId, noticeRequestDto, auth.getUsername());
         return ResponseEntity.noContent().build();
     }
 
@@ -80,7 +80,7 @@ public class ExperienceController {
             @PathVariable UUID noticeId,
             @AuthenticationPrincipal CustomOAuth2User auth
     ) {
-        experienceService.deleteNotice(noticeId, auth.getUsername());
+        noticeService.deleteNotice(noticeId, auth.getUsername());
         return ResponseEntity.noContent().build();
     }
 
@@ -90,7 +90,7 @@ public class ExperienceController {
             @PathVariable UUID noticeId,
             @AuthenticationPrincipal CustomOAuth2User auth
     ) {
-        experienceService.applyNotice(noticeId, auth.getUsername());
+        noticeService.applyNotice(noticeId, auth.getUsername());
         return ResponseEntity.noContent().build();
     }
 
@@ -100,7 +100,7 @@ public class ExperienceController {
             @PathVariable UUID noticeId,
             @AuthenticationPrincipal CustomOAuth2User auth
     ) {
-        experienceService.cancelApplyNotice(noticeId, auth.getUsername());
+        noticeService.cancelApplyNotice(noticeId, auth.getUsername());
         return ResponseEntity.noContent().build();
     }
 
@@ -109,7 +109,7 @@ public class ExperienceController {
     public ResponseEntity<List<String>> getParticipants(
             @PathVariable UUID noticeId
     ) {
-        List<String> participants = experienceService.getParticipants(noticeId);
+        List<String> participants = noticeService.getParticipants(noticeId);
         return ResponseEntity.ok(participants);
     }
 }
