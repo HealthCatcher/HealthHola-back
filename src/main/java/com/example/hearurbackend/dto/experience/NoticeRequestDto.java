@@ -12,7 +12,6 @@ public class NoticeRequestDto {
     private String author;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
-    private boolean isUpdated;
     private String campaignDetails;
     private String instruction;
 }
