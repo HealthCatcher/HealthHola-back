@@ -43,7 +43,7 @@ public class ExperienceController {
     }
 
     @Operation(summary = "체험단 공고 작성")
-    @PostMapping("/notice")
+    @PostMapping(value= "/notice", consumes = "multipart/form-data")
     public ResponseEntity<Void> createPost(
             @AuthenticationPrincipal CustomOAuth2User auth,
             @ModelAttribute NoticeRequestDto noticeRequestDto,
