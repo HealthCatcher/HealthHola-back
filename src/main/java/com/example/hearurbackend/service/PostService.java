@@ -43,6 +43,7 @@ public class PostService {
                             .createDate(post.getCreateDate())
                             .views(post.getViews())
                             .likes(post.getLikesCount())
+                            .content(post.getContent())
                             .commentsCount(post.getCommentsCount())
                             .build();
                 })
