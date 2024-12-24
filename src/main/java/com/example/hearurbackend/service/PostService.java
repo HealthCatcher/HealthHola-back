@@ -141,4 +141,8 @@ public class PostService {
                 () -> new EntityNotFoundException("Like not found with post id: " + postNo + " and user id: " + user.getUsername()));
         likeRepository.delete(like);
     }
+
+    public Post getPost(Long postNo) {
+        return postRepository.findById(postNo).orElseThrow(() -> new EntityNotFoundException("Post not found with id: " + postNo));
+    }
 }

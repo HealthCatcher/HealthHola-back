@@ -1,8 +1,12 @@
 package com.example.hearurbackend.entity;
 
+import com.example.hearurbackend.domain.DocsType;
+import com.example.hearurbackend.domain.ReportStatus;
+import com.example.hearurbackend.domain.ReportType;
 import com.example.hearurbackend.entity.community.Comment;
 import com.example.hearurbackend.entity.community.Post;
 import com.example.hearurbackend.entity.experience.Notice;
+import com.example.hearurbackend.entity.experience.Review;
 import com.example.hearurbackend.entity.user.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -16,13 +20,6 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Report {
-    public enum ReportType {
-        SPAM, HARASSMENT, INAPPROPRIATE, OTHER
-    }
-
-    public enum ReportStatus {
-        PENDING, RESOLVED, DISMISSED
-    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -48,14 +45,21 @@ public class Report {
     private Comment comment; // 관련 댓글
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "review_id")
+    private Review review; // 관련 리뷰
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reporter_id")
     private User reporter; // 신고자
 
     @Enumerated(EnumType.STRING)
     private ReportStatus status; // 신고 처리 상태 (예: PENDING, RESOLVED, DISMISSED)
 
+    @Enumerated(EnumType.STRING)
+    private DocsType docsType; // 신고 대상 타입 (예: COMMENT, NOTICE, POST, REVIEW)
+
     @Builder
-    public Report(ReportType type, String description, LocalDateTime reportDate, Post post, Notice notice, Comment comment, User reporter, ReportStatus status) {
+    public Report(ReportType type, String description, LocalDateTime reportDate, Post post, Notice notice, Comment comment, Review review, User reporter, ReportStatus status) {
         this.type = type;
         this.description = description;
         this.reportDate = reportDate;

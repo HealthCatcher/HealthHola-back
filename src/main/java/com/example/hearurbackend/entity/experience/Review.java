@@ -1,5 +1,6 @@
 package com.example.hearurbackend.entity.experience;
 
+import com.example.hearurbackend.entity.Report;
 import com.example.hearurbackend.entity.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
