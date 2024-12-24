@@ -8,7 +8,7 @@ import com.example.hearurbackend.entity.community.Post;
 import com.example.hearurbackend.service.PostService;
 import com.example.hearurbackend.service.S3Uploader;
 import io.swagger.v3.oas.annotations.Operation;
-
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -45,11 +45,11 @@ public class PostController {
     }
 
     @Operation(summary = "게시글 작성")
-    @PostMapping(value = "/post", consumes = "multipart/form-data")
+    @PostMapping(value = "/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> createPost(
             @AuthenticationPrincipal CustomOAuth2User auth,
-            @ModelAttribute PostRequestDto postRequestDto,
-            @RequestParam(value="image", required = false) MultipartFile imageFile
+            @RequestPart(value = "dto", required = true) PostRequestDto postRequestDto,
+            @RequestPart(value = "image", required = false) MultipartFile imageFile
     ) throws IOException {
         if (imageFile != null && !imageFile.isEmpty()) {
             // 파일 저장 로직 실행

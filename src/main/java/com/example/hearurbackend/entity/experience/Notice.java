@@ -50,7 +50,7 @@ public class Notice {
 
 
     @Builder
-    public Notice(User author, String category, String title, String location, LocalDateTime createDate, LocalDateTime startDate, LocalDateTime endDate, String company, String content, int price, String campaignDetails, String instruction) {
+    public Notice(User author, String category, String title, String location, LocalDateTime createDate, LocalDateTime startDate, LocalDateTime endDate, String company, String content, int price, String campaignDetails, String instruction, int maxParticipants) {
         this.author = author;
         this.category = category;
         this.title = title;
@@ -64,6 +64,7 @@ public class Notice {
         this.campaignDetails = campaignDetails;
         this.instruction = instruction;
         this.views = 0;
+        this.maxParticipants = maxParticipants;
     }
 
 

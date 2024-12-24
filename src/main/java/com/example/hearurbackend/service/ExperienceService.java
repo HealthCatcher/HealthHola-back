@@ -89,6 +89,7 @@ public class ExperienceService {
                 .category(noticeRequestDto.getCategory())
                 .campaignDetails(noticeRequestDto.getCampaignDetails())
                 .instruction(noticeRequestDto.getInstruction())
+                .maxParticipants(noticeRequestDto.getMaxParticipants())
                 .build();
         return experienceNoticeRepository.save(notice);
     }

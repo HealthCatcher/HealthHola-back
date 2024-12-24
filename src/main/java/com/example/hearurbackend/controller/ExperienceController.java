@@ -46,14 +46,13 @@ public class ExperienceController {
     @PostMapping(value= "/notice", consumes = "multipart/form-data")
     public ResponseEntity<Void> createPost(
             @AuthenticationPrincipal CustomOAuth2User auth,
-            @ModelAttribute NoticeRequestDto noticeRequestDto,
-            @RequestParam(value="image", required = false) MultipartFile imageFile
+            @RequestPart(value="dto", required = true) NoticeRequestDto noticeRequestDto,
+            @RequestPart(value="image", required = false) MultipartFile imageFile
     ) throws IOException {
         if (imageFile != null && !imageFile.isEmpty()) {
             // 파일 저장 로직 실행
             String fileName = s3Uploader.upload(imageFile, "HealthHola-Notice-Image"); // 예시 함수, 파일을 저장하고 파일 이름을 반환
         }
-
         Notice newNotice = experienceService.createNotice(noticeRequestDto, auth.getUsername());
         String noticeId = newNotice.getId().toString();
         URI location = ServletUriComponentsBuilder
