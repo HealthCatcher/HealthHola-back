@@ -5,10 +5,12 @@ import com.example.hearurbackend.entity.coupon.Coupon;
 import com.example.hearurbackend.repository.CouponRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CouponService {
