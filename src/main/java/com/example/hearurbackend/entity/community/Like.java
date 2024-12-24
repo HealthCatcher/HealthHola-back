@@ -2,15 +2,19 @@ package com.example.hearurbackend.entity.community;
 
 import com.example.hearurbackend.entity.user.User;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @Entity
-@NoArgsConstructor
-@Table(name = "post_likes")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "post_likes", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"username", "post"})
+})
 public class Like {
     @Id
+    @Column(name = "like_no")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long no;
+    private Long like_no;
 
     @ManyToOne
     @JoinColumn(name = "username", nullable = false)
@@ -25,3 +29,4 @@ public class Like {
         this.post = post;
     }
 }
+

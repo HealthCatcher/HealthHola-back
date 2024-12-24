@@ -122,6 +122,10 @@ public class PostService {
                 () -> new EntityNotFoundException("Post not found with id: " + postNo));
         User user = userService.getUser(username).orElseThrow(
                 () -> new EntityNotFoundException("User not found with id: " + username));
+        boolean alreadyLiked = likeRepository.existsByUserAndPost(user, post);
+        if (alreadyLiked) {
+            throw new IllegalStateException("You already liked this post.");
+        }
         Like like = new Like(user, post);
         likeRepository.save(like);
     }
