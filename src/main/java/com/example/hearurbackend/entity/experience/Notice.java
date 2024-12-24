@@ -33,6 +33,8 @@ public class Notice {
     private int price;
     private String campaignDetails;
     private String instruction;
+    private int views;
+
     @OneToMany(mappedBy = "experienceNotice", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
     @ManyToMany
@@ -60,6 +62,7 @@ public class Notice {
         this.price = price;
         this.campaignDetails = campaignDetails;
         this.instruction = instruction;
+        this.views = 0;
     }
 
 
@@ -75,5 +78,9 @@ public class Notice {
 
     public void removeParticipant(User user) {
         participants.remove(user);
+    }
+
+    public void increaseViews() {
+        this.views++;
     }
 }

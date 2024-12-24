@@ -44,6 +44,8 @@ public class ExperienceService {
 
     public NoticeResponseDto getNoticeDetail(UUID noticeId) {
         Notice notice = experienceNoticeRepository.findById(noticeId).orElseThrow(() -> new EntityNotFoundException("Notice not found with id: " + noticeId));
+        notice.increaseViews();
+        experienceNoticeRepository.save(notice);
         List<ReviewResponseDto> reviewDTOList = notice.getReviews().stream()
                 .map(review -> {
                     Optional<User> userOptional = userService.getUser(notice.getAuthor().getUsername());
@@ -66,6 +68,7 @@ public class ExperienceService {
                 .startDate(notice.getStartDate())
                 .endDate(notice.getEndDate())
                 .reviews(reviewDTOList)
+                .views(notice.getViews())
                 .build();
     }
 
