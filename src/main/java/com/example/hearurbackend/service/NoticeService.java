@@ -39,6 +39,8 @@ public class NoticeService {
                             .createDate(notice.getCreateDate())
                             .startDate(notice.getStartDate())
                             .endDate(notice.getEndDate())
+                            .views(notice.getViews())
+                            .maxParticipants(notice.getMaxParticipants())
                             .build();
                 })
                 .collect(Collectors.toList()).reversed();
@@ -72,6 +74,7 @@ public class NoticeService {
                 .reviews(reviewDTOList)
                 .views(notice.getViews())
                 .participants(notice.getParticipants().size())
+                .maxParticipants(notice.getMaxParticipants())
                 .campaignDetails(notice.getCampaignDetails())
                 .instruction(notice.getInstruction())
                 .build();
