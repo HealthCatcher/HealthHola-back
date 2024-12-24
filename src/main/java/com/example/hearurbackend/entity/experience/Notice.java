@@ -34,6 +34,7 @@ public class Notice {
     private String campaignDetails;
     private String instruction;
     private int views;
+    private int maxParticipants;
 
     @OneToMany(mappedBy = "experienceNotice", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();

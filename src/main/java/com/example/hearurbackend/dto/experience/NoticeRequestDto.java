@@ -14,4 +14,5 @@ public class NoticeRequestDto {
     private LocalDateTime endDate;
     private String campaignDetails;
     private String instruction;
+    private int maxParticipants;
 }

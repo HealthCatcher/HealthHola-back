@@ -71,6 +71,9 @@ public class ExperienceService {
                 .endDate(notice.getEndDate())
                 .reviews(reviewDTOList)
                 .views(notice.getViews())
+                .participants(notice.getParticipants().size())
+                .campaignDetails(notice.getCampaignDetails())
+                .instruction(notice.getInstruction())
                 .build();
     }
 

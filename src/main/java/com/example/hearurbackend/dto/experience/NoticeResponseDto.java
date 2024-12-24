@@ -24,4 +24,9 @@ public class NoticeResponseDto {
     private final List<ReviewResponseDto> reviews;
     private final int views;
     private final int likes;
+    private final int maxParticipants;
+    private final int participants;
+    private final List<String> participantsList;
+    private final String campaignDetails;
+    private final String instruction;
 }
