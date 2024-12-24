@@ -9,6 +9,7 @@ import com.example.hearurbackend.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +41,7 @@ public class PostController {
     }
 
     @Operation(summary = "게시글 작성")
-    @PostMapping("/post")
+    @PostMapping(value = "/notice", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> createPost(
             @AuthenticationPrincipal CustomOAuth2User auth,
             @RequestBody PostRequestDto postRequestDto

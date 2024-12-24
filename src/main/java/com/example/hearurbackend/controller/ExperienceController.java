@@ -5,13 +5,16 @@ import com.example.hearurbackend.dto.experience.NoticeResponseDto;
 import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
 import com.example.hearurbackend.entity.experience.Notice;
 import com.example.hearurbackend.service.ExperienceService;
+import com.example.hearurbackend.service.S3Uploader;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
@@ -21,6 +24,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/experience")
 public class ExperienceController {
     private final ExperienceService experienceService;
+    private final S3Uploader s3Uploader;
 
     @Operation(summary = "체험단 공고 목록 조회")
     @GetMapping("/notice")
@@ -42,13 +46,20 @@ public class ExperienceController {
     @PostMapping("/notice")
     public ResponseEntity<Void> createPost(
             @AuthenticationPrincipal CustomOAuth2User auth,
-            @RequestBody NoticeRequestDto noticeRequestDto
-    ) {
+            @ModelAttribute NoticeRequestDto noticeRequestDto,
+            @RequestParam("image") MultipartFile imageFile
+    ) throws IOException {
+        // 파일 처리 로직, 예를 들어 파일을 저장하거나 데이터베이스에 파일 정보를 저장
+        if (!imageFile.isEmpty()) {
+            // 파일 저장 로직 실행
+            String fileName = s3Uploader.upload(imageFile, "HealthHola-Notice-Image"); // 예시 함수, 파일을 저장하고 파일 이름을 반환
+        }
+
         Notice newNotice = experienceService.createNotice(noticeRequestDto, auth.getUsername());
         String noticeId = newNotice.getId().toString();
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/community/{noticeId}")
+                .path("/{noticeId}")
                 .buildAndExpand(noticeId)
                 .toUri();
         return ResponseEntity.created(location).build();
