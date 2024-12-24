@@ -47,7 +47,7 @@ public class ExperienceController {
     public ResponseEntity<Void> createPost(
             @AuthenticationPrincipal CustomOAuth2User auth,
             @ModelAttribute NoticeRequestDto noticeRequestDto,
-            @RequestParam("image") MultipartFile imageFile
+            @RequestParam(value="image", required = false) MultipartFile imageFile
     ) throws IOException {
         // 파일 처리 로직, 예를 들어 파일을 저장하거나 데이터베이스에 파일 정보를 저장
         if (!imageFile.isEmpty()) {

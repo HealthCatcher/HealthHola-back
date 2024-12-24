@@ -45,7 +45,7 @@ public class PostController {
     public ResponseEntity<Void> createPost(
             @AuthenticationPrincipal CustomOAuth2User auth,
             @RequestBody PostRequestDto postRequestDto,
-            @RequestParam("image") MediaType imageFile
+            @RequestParam(value="image", required = false) MediaType imageFile
     ) {
         Post newPost = postService.createPost(postRequestDto, auth.getUsername());
         String postNo = newPost.getNo().toString();
