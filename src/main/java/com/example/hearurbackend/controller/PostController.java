@@ -48,7 +48,7 @@ public class PostController {
     @PostMapping(value = "/post", consumes = "multipart/form-data")
     public ResponseEntity<Void> createPost(
             @AuthenticationPrincipal CustomOAuth2User auth,
-            @RequestBody PostRequestDto postRequestDto,
+            @ModelAttribute PostRequestDto postRequestDto,
             @RequestParam(value="image", required = false) MultipartFile imageFile
     ) throws IOException {
         if (imageFile != null && !imageFile.isEmpty()) {
