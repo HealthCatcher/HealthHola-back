@@ -58,4 +58,9 @@ public class CommentService {
         }
         commentRepository.delete(comment);
     }
+
+    public Comment getComment(UUID commentId) {
+        return commentRepository.findById(commentId).orElseThrow(
+                () -> new EntityNotFoundException("Comment not found with id: " + commentId));
+    }
 }
