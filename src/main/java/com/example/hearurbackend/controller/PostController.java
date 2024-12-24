@@ -41,10 +41,11 @@ public class PostController {
     }
 
     @Operation(summary = "게시글 작성")
-    @PostMapping(value = "/notice", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/post", consumes = "multipart/form-data")
     public ResponseEntity<Void> createPost(
             @AuthenticationPrincipal CustomOAuth2User auth,
-            @RequestBody PostRequestDto postRequestDto
+            @RequestBody PostRequestDto postRequestDto,
+            @RequestParam("image") MediaType imageFile
     ) {
         Post newPost = postService.createPost(postRequestDto, auth.getUsername());
         String postNo = newPost.getNo().toString();
