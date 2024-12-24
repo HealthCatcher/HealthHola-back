@@ -49,8 +49,7 @@ public class ExperienceController {
             @ModelAttribute NoticeRequestDto noticeRequestDto,
             @RequestParam(value="image", required = false) MultipartFile imageFile
     ) throws IOException {
-        // 파일 처리 로직, 예를 들어 파일을 저장하거나 데이터베이스에 파일 정보를 저장
-        if (!imageFile.isEmpty()) {
+        if (imageFile != null && !imageFile.isEmpty()) {
             // 파일 저장 로직 실행
             String fileName = s3Uploader.upload(imageFile, "HealthHola-Notice-Image"); // 예시 함수, 파일을 저장하고 파일 이름을 반환
         }

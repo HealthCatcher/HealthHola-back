@@ -6,6 +6,7 @@ import com.example.hearurbackend.dto.post.PostResponseDto;
 
 import com.example.hearurbackend.entity.community.Post;
 import com.example.hearurbackend.service.PostService;
+import com.example.hearurbackend.service.S3Uploader;
 import io.swagger.v3.oas.annotations.Operation;
 
 import lombok.RequiredArgsConstructor;
@@ -13,8 +14,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
@@ -23,6 +26,7 @@ import java.util.List;
 @RequestMapping("/api/v1/community")
 public class PostController {
     private final PostService postService;
+    private final S3Uploader s3Uploader;
 
     @Operation(summary = "게시글 목록 조회")
     @GetMapping("/post")
@@ -45,8 +49,12 @@ public class PostController {
     public ResponseEntity<Void> createPost(
             @AuthenticationPrincipal CustomOAuth2User auth,
             @RequestBody PostRequestDto postRequestDto,
-            @RequestParam(value="image", required = false) MediaType imageFile
-    ) {
+            @RequestParam(value="image", required = false) MultipartFile imageFile
+    ) throws IOException {
+        if (imageFile != null && !imageFile.isEmpty()) {
+            // 파일 저장 로직 실행
+            String fileName = s3Uploader.upload(imageFile, "HealthHola-Post-Image"); // 예시 함수, 파일을 저장하고 파일 이름을 반환
+        }
         Post newPost = postService.createPost(postRequestDto, auth.getUsername());
         String postNo = newPost.getNo().toString();
         URI location = ServletUriComponentsBuilder
