@@ -1,5 +1,6 @@
 package com.example.hearurbackend.dto.review;
 
+import com.example.hearurbackend.entity.experience.Review;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -17,5 +18,12 @@ public class ReviewResponseDto {
         this.author = author;
         this.content = content;
         this.createDate = createDate;
+    }
+
+    public ReviewResponseDto(Review review) {
+        this.id = review.getId();
+        this.author = review.getUser().getUsername();
+        this.content = review.getContent();
+        this.createDate = review.getCreatedAt();
     }
 }
