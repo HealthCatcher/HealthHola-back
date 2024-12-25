@@ -32,7 +32,7 @@ public class ReviewService {
 
         var notice = noticeService.getNotice(experienceId);
 
-        Review newReview = new Review(user.get(), notice, reviewRequestDto.getContent());
+        Review newReview = new Review(user.get(), notice, reviewRequestDto);
         return reviewRepository.save(newReview);
     }
 

@@ -1,5 +1,6 @@
 package com.example.hearurbackend.entity.experience;
 
+import com.example.hearurbackend.dto.review.ReviewRequestDto;
 import com.example.hearurbackend.entity.Report;
 import com.example.hearurbackend.entity.user.User;
 import jakarta.persistence.*;
@@ -34,11 +35,12 @@ public class Review {
     @ElementCollection
     private List<String> urls = new ArrayList<>();
 
-    public Review(User user, Notice experienceNotice, String content) {
+    public Review(User user, Notice experienceNotice, ReviewRequestDto reviewRequestDto) {
         this.createdAt = LocalDateTime.now();
         this.user = user;
         this.experienceNotice = experienceNotice;
-        this.content = content;
+        this.content = reviewRequestDto.getContent();
+        this.urls = reviewRequestDto.getUrls();
     }
 
     public void updateReview(String content) {
