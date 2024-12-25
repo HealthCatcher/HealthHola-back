@@ -3,7 +3,9 @@ package com.example.hearurbackend.dto.report;
 
 import com.example.hearurbackend.domain.DocsType;
 import com.example.hearurbackend.entity.Report;
+import lombok.Getter;
 
+@Getter
 public class ReportResponseDto {
     private Long id;
     private String username;

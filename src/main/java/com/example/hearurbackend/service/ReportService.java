@@ -38,6 +38,7 @@ public class ReportService {
                 .reporter(userService.getUser(username).orElseThrow(
                         () -> new IllegalArgumentException("User not found with username: " + username)
                 ))
+                .docsType(reportRequestDto.getDocsType())
                 .status(ReportStatus.PENDING);
 
         // docsType에 따라 관련 엔티티 설정
@@ -84,5 +85,30 @@ public class ReportService {
             throw new SecurityException("You are not an admin.");
         }
         return new ReportResponseDto(report);
+    }
+
+    public List<ReportResponseDto> getReportList(String username){
+        User reporter = userService.getUser(username).orElseThrow(
+                () -> new IllegalArgumentException("User not found with username: " + username)
+        );
+        if(!reporter.getRole().checkAdmin()) {
+            throw new SecurityException("You are not an admin.");
+        }
+        return reportRepository.findAll().stream()
+                .map(ReportResponseDto::new)
+                .toList();
+    }
+
+    public void processReport(String username, Long id, ReportStatus status) {
+        Report report = reportRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Report not found with id: " + id));
+        User admin = userService.getUser(username).orElseThrow(
+                () -> new IllegalArgumentException("User not found with username: " + username)
+        );
+        if(!admin.getRole().checkAdmin()) {
+            throw new SecurityException("You are not an admin.");
+        }
+        report.setStatus(status);
+        reportRepository.save(report);
     }
 }

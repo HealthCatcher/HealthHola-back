@@ -9,10 +9,7 @@ import com.example.hearurbackend.entity.experience.Notice;
 import com.example.hearurbackend.entity.experience.Review;
 import com.example.hearurbackend.entity.user.User;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -52,6 +49,7 @@ public class Report {
     @JoinColumn(name = "reporter_id")
     private User reporter; // 신고자
 
+    @Setter
     @Enumerated(EnumType.STRING)
     private ReportStatus status; // 신고 처리 상태 (예: PENDING, RESOLVED, DISMISSED)
 
@@ -59,8 +57,9 @@ public class Report {
     private DocsType docsType; // 신고 대상 타입 (예: COMMENT, NOTICE, POST, REVIEW)
 
     @Builder
-    public Report(ReportType type, String description, LocalDateTime reportDate, Post post, Notice notice, Comment comment, Review review, User reporter, ReportStatus status) {
+    public Report(ReportType type, String description, LocalDateTime reportDate, Post post, Notice notice, Comment comment, Review review, User reporter, ReportStatus status, DocsType docsType) {
         this.type = type;
+        this.docsType = docsType;
         this.description = description;
         this.reportDate = reportDate;
         this.post = post;

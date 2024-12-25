@@ -1,5 +1,6 @@
 package com.example.hearurbackend.controller;
 
+import com.example.hearurbackend.domain.ReportStatus;
 import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
 import com.example.hearurbackend.dto.report.ReportRequestDto;
 import com.example.hearurbackend.dto.report.ReportResponseDto;
@@ -28,13 +29,13 @@ public class ReportController {
         return ResponseEntity.noContent().build();
     }
 
-//    @Operation(summary = "신고 목록 조회")
-//    @GetMapping("/report")
-//    public ResponseEntity<List<ReportResponseDto>> getReport(
-//            @AuthenticationPrincipal CustomOAuth2User auth
-//    ) {
-//        return ResponseEntity.ok(reportService.getReportList(auth.getUsername()));
-//    }
+    @Operation(summary = "신고 목록 조회")
+    @GetMapping("/report")
+    public ResponseEntity<List<ReportResponseDto>> getReport(
+            @AuthenticationPrincipal CustomOAuth2User auth
+    ) {
+        return ResponseEntity.ok(reportService.getReportList(auth.getUsername()));
+    }
 
     @Operation(summary = "신고 상세 조회")
     @GetMapping("/report/{id}")
@@ -43,5 +44,17 @@ public class ReportController {
             @PathVariable Long id
     ) {
         return ResponseEntity.ok(reportService.getReportDetail(auth.getUsername(), id));
+    }
+
+    @Operation(summary = "신고 처리")
+    @PutMapping("/report/{id}/status/{status}")
+    public ResponseEntity<Void> processReport(
+            @AuthenticationPrincipal CustomOAuth2User auth,
+            @PathVariable Long id,
+            @PathVariable String status
+    ) {
+        ReportStatus reportStatus = ReportStatus.valueOf(status.toUpperCase());
+        reportService.processReport(auth.getUsername(), id, reportStatus);
+        return ResponseEntity.noContent().build();
     }
 }
