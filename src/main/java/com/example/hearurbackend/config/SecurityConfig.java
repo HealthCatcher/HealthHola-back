@@ -128,6 +128,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/community/post/*/comment").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/experience/notice").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/experience/notice/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/experience/review").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/experience/review/*").permitAll()
                         .anyRequest().authenticated());
 
         //세션 설정 : STATELESS
