@@ -1,44 +1,60 @@
 package com.example.hearurbackend.controller;
 
 import com.example.hearurbackend.dto.coupon.CouponRequestDto;
+import com.example.hearurbackend.dto.coupon.CouponResponseDto;
 import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
 import com.example.hearurbackend.service.CouponService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/coupon")
+@RequestMapping("/api/v1")
 public class CouponController {
+    private static final Logger log = LoggerFactory.getLogger(CouponController.class);
     private final CouponService couponService;
-
     @Operation(summary = "쿠폰 사용")
-    @PutMapping("/{coupon_code}")
-    public void useCoupon(
+    @PutMapping("/coupon/{coupon_code}")
+    public ResponseEntity<Void> useCoupon(
             @AuthenticationPrincipal CustomOAuth2User auth,
-            @PathVariable String coupon_code) {
+            @PathVariable String coupon_code
+    ) {
         couponService.useCoupon(coupon_code, auth.getUsername());
-    }
-    @Operation(summary = "쿠폰 추가")
-    @PostMapping
-    public void addCoupon(
-            @AuthenticationPrincipal CustomOAuth2User auth,
-            @RequestBody CouponRequestDto couponDto) {
-        if (auth.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-            throw new IllegalStateException("권한이 없습니다.");
-        }
-
-        couponService.addCoupon(auth, couponDto.getCode(), couponDto.getExpirationDate());
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "쿠폰 삭제")
-    @DeleteMapping("/{coupon_code}")
-    public void deleteCoupon(
+    @DeleteMapping("/coupon/{coupon_code}")
+    public ResponseEntity<Void> deleteCoupon(
             @PathVariable String coupon_code,
-            @AuthenticationPrincipal CustomOAuth2User auth) {
+            @AuthenticationPrincipal CustomOAuth2User auth
+    ) {
         couponService.deleteCoupon(auth, coupon_code);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "쿠폰 조회")
+    @GetMapping("/coupon")
+    public ResponseEntity<List<CouponResponseDto>> getCoupon(
+            @AuthenticationPrincipal CustomOAuth2User auth
+    ) {
+        return ResponseEntity.ok(couponService.getCouponList(auth));
+    }
+
+    @Operation(summary = "쿠폰 추가")
+    @PostMapping("/coupon")
+    public ResponseEntity<Void> addCoupon(
+            @AuthenticationPrincipal CustomOAuth2User auth,
+            @RequestBody CouponRequestDto couponRequestDto
+    ) {
+        couponService.addCoupon(auth, couponRequestDto);
+        return ResponseEntity.ok().build();
     }
 }
