@@ -134,8 +134,9 @@ public class AuthService {
                 userDTO.getUsername(),
                 passwordEncoder.encode(userDTO.getPassword()),
                 userDTO.getName(),
-                userDTO.getUsername(),
-                UserRole.ROLE_USER
+                userDTO.getEmail(),
+                UserRole.ROLE_USER,
+                userDTO.getNickname()
         );
         return userRepository.save(user);
     }

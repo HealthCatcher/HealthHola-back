@@ -28,11 +28,13 @@ public class ReviewService {
     }
 
     public Review createReview(String username, UUID experienceId, ReviewRequestDto reviewRequestDto) {
-        Optional<User> user = userService.getUser(username);
+        User user = userService.getUser(username).orElseThrow(
+                () -> new IllegalArgumentException("User not found with username: " + username)
+        );
 
         var notice = noticeService.getNotice(experienceId);
 
-        Review newReview = new Review(user.get(), notice, reviewRequestDto);
+        Review newReview = new Review(user, notice, reviewRequestDto);
         return reviewRepository.save(newReview);
     }
 

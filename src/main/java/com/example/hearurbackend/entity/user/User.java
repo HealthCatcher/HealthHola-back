@@ -64,15 +64,16 @@ public class User {
     @ManyToMany(mappedBy = "participants")
     private List<Notice> participatedExperiences = new ArrayList<>();
 
-    public User(String username, String password, String name, String email, UserRole role) {
+    public User(String username, String password, String name, String email, UserRole role, String nickname) {
         this.username = username;
         this.password = password;
         this.name = name;
         this.email = email;
         this.role = role;
-        this.nickname = name;
+        this.nickname = nickname;
         this.point = 0;
     }
+
 
     public void createOAuthUser(String username, String email, String name, UserRole role) {
         this.username = username;
