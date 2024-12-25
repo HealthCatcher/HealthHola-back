@@ -4,12 +4,14 @@ import com.example.hearurbackend.entity.Report;
 import com.example.hearurbackend.entity.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Getter
 @Entity
+@NoArgsConstructor
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -28,6 +30,9 @@ public class Review {
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Report> reports = new ArrayList<>();
+
+    @ElementCollection
+    private List<String> urls = new ArrayList<>();
 
     public Review(User user, Notice experienceNotice, String content) {
         this.createdAt = LocalDateTime.now();

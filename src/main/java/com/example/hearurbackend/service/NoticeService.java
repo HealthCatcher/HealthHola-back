@@ -58,7 +58,8 @@ public class NoticeService {
                             review.getId(),
                             authorNickname,
                             review.getContent(),
-                            review.getCreatedAt()
+                            review.getCreatedAt(),
+                            review.getUrls()
                     );
                 })
                 .toList();
