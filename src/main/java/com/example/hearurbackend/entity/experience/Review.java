@@ -43,7 +43,8 @@ public class Review {
         this.urls = reviewRequestDto.getUrls();
     }
 
-    public void updateReview(String content) {
+    public void updateReview(String content, List<String> urls) {
         this.content = content;
+        this.urls = urls;
     }
 }

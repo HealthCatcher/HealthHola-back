@@ -45,7 +45,7 @@ public class ReviewService {
             throw new SecurityException("You are not the author of this review");
         }
 
-        review.updateReview(reviewRequestDto.getContent());
+        review.updateReview(reviewRequestDto.getContent(), reviewRequestDto.getUrls());
         reviewRepository.save(review);
     }
 
