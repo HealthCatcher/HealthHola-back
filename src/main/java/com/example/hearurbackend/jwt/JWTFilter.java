@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class JWTFilter extends OncePerRequestFilter {
 
@@ -31,14 +32,14 @@ public class JWTFilter extends OncePerRequestFilter {
         //cookie들을 불러온 뒤 Authorization Key에 담긴 쿠키를 찾음
 
         String authorization = request.getHeader("Authorization");
-        if (authorization != null) {
-            authorization = authorization.split(" ")[1];
+        if (authorization != null && authorization.startsWith("Bearer")) {
+            authorization = Objects.requireNonNull(authorization).split(" ")[1];
         } else {
             Cookie[] cookies = request.getCookies();
             if (cookies == null) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+                filterChain.doFilter(request, response);
+                return;
+            }
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("Authorization")) {
                     authorization = cookie.getValue();
