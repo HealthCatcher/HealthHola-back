@@ -20,7 +20,6 @@ public class Question {
     private List<AnswerOption> answerOptions;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    @JoinColumn(name = "question_id")
     private List<UserResponse> userResponses;
 
     public Question(String questionText) {
