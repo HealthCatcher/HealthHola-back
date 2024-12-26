@@ -65,6 +65,7 @@ public class Report {
         this.post = post;
         this.notice = notice;
         this.comment = comment;
+        this.review = review;
         this.reporter = reporter;
         this.status = status;
     }
