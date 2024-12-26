@@ -59,4 +59,29 @@ public class UserService {
         User user = userRepository.findById(username).orElseThrow(() -> new EntityNotFoundException("User not found"));
         return user.isAdmin();
     }
+
+    public List<NoticeResponseDto> getAppliedNoticeList(String username) {
+        User user = userRepository.findById(username).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        return user.getParticipatedExperiences().stream()
+                .map(notice -> {
+                    Optional<User> userOptional = getUser(notice.getAuthor().getUsername());
+                    String authorNickname = userOptional.map(User::getNickname).orElse("Unknown Author");
+
+                    return NoticeResponseDto.builder()
+                            .id(notice.getId())
+                            .category(notice.getCategory())
+                            .title(notice.getTitle())
+                            .author(authorNickname)
+                            .content(notice.getContent())
+                            .createDate(notice.getCreateDate())
+                            .startDate(notice.getStartDate())
+                            .endDate(notice.getEndDate())
+                            .views(notice.getViews())
+                            .maxParticipants(notice.getMaxParticipants())
+                            .participants(notice.getParticipants().size())
+                            .favoriteCount(notice.getFavoritesCount())
+                            .build();
+                })
+                .collect(Collectors.toList()).reversed();
+    }
 }

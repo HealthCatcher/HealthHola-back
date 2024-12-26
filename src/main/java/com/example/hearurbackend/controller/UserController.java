@@ -35,4 +35,12 @@ public class UserController {
     ) {
         return ResponseEntity.ok(userService.getFavoriteNoticeList(auth.getUsername()));
     }
+
+    @Operation(summary = "내가 신청한 체험단 목록 조회")
+    @GetMapping("/applied-notice")
+    public ResponseEntity<List<NoticeResponseDto>> getAppliedList(
+            @AuthenticationPrincipal CustomOAuth2User auth
+    ) {
+        return ResponseEntity.ok(userService.getAppliedNoticeList(auth.getUsername()));
+    }
 }
