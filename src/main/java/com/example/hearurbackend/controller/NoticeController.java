@@ -121,4 +121,14 @@ public class NoticeController {
         }
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "체험단 공고 찜")
+    @PostMapping("/notice/{noticeId}/favorite")
+    public ResponseEntity<Void> favoriteNotice(
+            @PathVariable UUID noticeId,
+            @AuthenticationPrincipal CustomOAuth2User auth
+    ) {
+        noticeService.favoriteNotice(noticeId, auth.getUsername());
+        return ResponseEntity.noContent().build();
+    }
 }

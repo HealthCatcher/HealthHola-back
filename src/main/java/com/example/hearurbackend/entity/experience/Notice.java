@@ -97,4 +97,8 @@ public class Notice {
     public int getFavoritesCount() {
         return favoriteUsers.size();
     }
+
+    public void addFavoriteUser(User user) {
+        favoriteUsers.add(user);
+    }
 }

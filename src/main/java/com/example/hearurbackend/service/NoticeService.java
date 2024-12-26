@@ -155,4 +155,12 @@ public class NoticeService {
         notice.setImageUrl(fileUrl);
         experienceNoticeRepository.save(notice);
     }
+
+    public void favoriteNotice(UUID noticeId, String username) {
+        Notice notice = experienceNoticeRepository.findById(noticeId).orElseThrow(
+                () -> new EntityNotFoundException("Post not found with id: " + noticeId));
+        User user = userService.getUser(username).orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
+        notice.addFavoriteUser(user);
+        experienceNoticeRepository.save(notice);
+    }
 }
