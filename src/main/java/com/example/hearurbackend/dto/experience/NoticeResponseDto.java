@@ -30,4 +30,5 @@ public class NoticeResponseDto {
     private final String campaignDetails;
     private final String instruction;
     private final int favoriteCount;
+    private final boolean isFavorite;
 }

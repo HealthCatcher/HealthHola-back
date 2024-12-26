@@ -28,17 +28,20 @@ public class NoticeController {
 
     @Operation(summary = "체험단 공고 목록 조회")
     @GetMapping("/notice")
-    public ResponseEntity<List<NoticeResponseDto>> getNoticeList() {
-        List<NoticeResponseDto> noticeList = noticeService.getNoticeList();
+    public ResponseEntity<List<NoticeResponseDto>> getNoticeList(
+            @AuthenticationPrincipal CustomOAuth2User auth
+    ) {
+        List<NoticeResponseDto> noticeList = noticeService.getNoticeList(auth);
         return ResponseEntity.ok(noticeList);
     }
 
     @Operation(summary = "체험단 공고 상세 조회")
     @GetMapping("/notice/{noticeId}")
     public ResponseEntity<NoticeResponseDto> getNoticeDetail(
-            @PathVariable UUID noticeId
+            @PathVariable UUID noticeId,
+            @AuthenticationPrincipal CustomOAuth2User auth
     ) {
-        NoticeResponseDto responseDTO = noticeService.getNoticeDetail(noticeId);
+        NoticeResponseDto responseDTO = noticeService.getNoticeDetail(noticeId,auth);
         return ResponseEntity.ok(responseDTO);
     }
 

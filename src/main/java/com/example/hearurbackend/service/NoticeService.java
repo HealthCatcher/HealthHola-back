@@ -2,6 +2,7 @@ package com.example.hearurbackend.service;
 
 import com.example.hearurbackend.dto.experience.NoticeRequestDto;
 import com.example.hearurbackend.dto.experience.NoticeResponseDto;
+import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
 import com.example.hearurbackend.dto.review.ReviewResponseDto;
 import com.example.hearurbackend.entity.experience.Notice;
 import com.example.hearurbackend.entity.user.User;
@@ -23,13 +24,30 @@ import java.util.stream.Collectors;
 public class NoticeService {
     private final ExperienceNoticeRepository experienceNoticeRepository;
     private final UserService userService;
-    public List<NoticeResponseDto> getNoticeList() {
+    public List<NoticeResponseDto> getNoticeList(CustomOAuth2User auth) {
         List<Notice> noticeEntities = experienceNoticeRepository.findAll();
         return noticeEntities.stream()
                 .map(notice -> {
                     Optional<User> userOptional = userService.getUser(notice.getAuthor().getUsername());
                     String authorNickname = userOptional.map(User::getNickname).orElse("Unknown Author");
-
+                    if(auth==null){
+                        return NoticeResponseDto.builder()
+                                .id(notice.getId())
+                                .category(notice.getCategory())
+                                .title(notice.getTitle())
+                                .author(authorNickname)
+                                .content(notice.getContent())
+                                .createDate(notice.getCreateDate())
+                                .startDate(notice.getStartDate())
+                                .endDate(notice.getEndDate())
+                                .views(notice.getViews())
+                                .maxParticipants(notice.getMaxParticipants())
+                                .participants(notice.getParticipants().size())
+                                .favoriteCount(notice.getFavoritesCount())
+                                .build();
+                    }
+                    User user = userService.getUser(auth.getUsername()).orElse(null);
+                    boolean isLiked = user != null && user.getFavoriteNotices().contains(notice);
                     return NoticeResponseDto.builder()
                             .id(notice.getId())
                             .category(notice.getCategory())
@@ -43,28 +61,45 @@ public class NoticeService {
                             .maxParticipants(notice.getMaxParticipants())
                             .participants(notice.getParticipants().size())
                             .favoriteCount(notice.getFavoritesCount())
+                            .isFavorite(isLiked)
                             .build();
                 })
                 .collect(Collectors.toList()).reversed();
     }
 
-    public NoticeResponseDto getNoticeDetail(UUID noticeId) {
+    public NoticeResponseDto getNoticeDetail(UUID noticeId, CustomOAuth2User auth) {
         Notice notice = experienceNoticeRepository.findById(noticeId).orElseThrow(() -> new EntityNotFoundException("Notice not found with id: " + noticeId));
         notice.increaseViews();
         experienceNoticeRepository.save(notice);
         List<ReviewResponseDto> reviewDTOList = notice.getReviews().stream()
-                .map(review -> {
-                    Optional<User> userOptional = userService.getUser(notice.getAuthor().getUsername());
-                    String authorNickname = userOptional.map(User::getNickname).orElse("Unknown Author");
-                    return new ReviewResponseDto(
-                            review.getId(),
-                            authorNickname,
-                            review.getContent(),
-                            review.getCreatedAt(),
-                            review.getUrls()
-                    );
-                })
+                .map(review -> new ReviewResponseDto(
+                        review.getId(),
+                        review.getUser().getNickname(),
+                        review.getContent(),
+                        review.getCreatedAt(),
+                        review.getUrls()
+                ))
                 .toList();
+        if(auth==null){
+            return NoticeResponseDto.builder()
+                    .id(notice.getId())
+                    .category(notice.getCategory())
+                    .title(notice.getTitle())
+                    .content(notice.getContent())
+                    .author(notice.getAuthor().getUsername())
+                    .createDate(notice.getCreateDate())
+                    .startDate(notice.getStartDate())
+                    .endDate(notice.getEndDate())
+                    .reviews(reviewDTOList)
+                    .views(notice.getViews())
+                    .participants(notice.getParticipants().size())
+                    .maxParticipants(notice.getMaxParticipants())
+                    .campaignDetails(notice.getCampaignDetails())
+                    .instruction(notice.getInstruction())
+                    .favoriteCount(notice.getFavoritesCount())
+                    .build();
+        }
+        boolean isFavorite = userService.getUser(auth.getUsername()).map(user -> user.getFavoriteNotices().contains(notice)).orElse(false);
         return NoticeResponseDto.builder()
                 .id(notice.getId())
                 .category(notice.getCategory())
@@ -81,6 +116,7 @@ public class NoticeService {
                 .campaignDetails(notice.getCampaignDetails())
                 .instruction(notice.getInstruction())
                 .favoriteCount(notice.getFavoritesCount())
+                .isFavorite(isFavorite)
                 .build();
     }
 

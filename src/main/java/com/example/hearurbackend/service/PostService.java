@@ -35,6 +35,19 @@ public class PostService {
                 .map(post -> {
                     Optional<User> userOptional = userService.getUser(post.getAuthor());
                     String authorNickname = userOptional.map(User::getNickname).orElse("Unknown Author");
+                    if(auth==null){
+                        return PostResponseDto.builder()
+                                .no(post.getNo())
+                                .category(post.getCategory())
+                                .title(post.getTitle())
+                                .author(authorNickname)
+                                .createDate(post.getCreateDate())
+                                .views(post.getViews())
+                                .likes(post.getLikesCount())
+                                .content(post.getContent())
+                                .commentsCount(post.getCommentsCount())
+                                .build();
+                    }
                     User user = userService.getUser(auth.getUsername()).orElse(null);
                     boolean isLiked = user != null && likeRepository.existsByUserAndPost(user, post);
                     return PostResponseDto.builder()
@@ -72,6 +85,21 @@ public class PostService {
 
         Optional<User> userOptional = userService.getUser(post.getAuthor());
         String authorNickname = userOptional.map(User::getNickname).orElse("Unknown Author");
+        if(auth==null){
+            return PostResponseDto.builder()
+                    .no(post.getNo())
+                    .category(post.getCategory())
+                    .title(post.getTitle())
+                    .content(post.getContent())
+                    .author(authorNickname)
+                    .createDate(post.getCreateDate())
+                    .updateDate(post.getUpdateDate())
+                    .isUpdated(post.isUpdated())
+                    .comments(commentDTOList)
+                    .views(post.getViews())
+                    .likes(post.getLikesCount())
+                    .build();
+        }
         User user = userService.getUser(auth.getUsername()).orElse(null);
         boolean isLiked = user != null && likeRepository.existsByUserAndPost(user, post);
         return PostResponseDto.builder()
