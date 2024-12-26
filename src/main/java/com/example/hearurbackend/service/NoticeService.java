@@ -148,4 +148,11 @@ public class NoticeService {
         return experienceNoticeRepository.findById(noticeId).orElseThrow(
                 () -> new EntityNotFoundException("Post not found with id: " + noticeId));
     }
+
+    public void uploadImage(UUID noticeId, String fileUrl) {
+        Notice notice = experienceNoticeRepository.findById(noticeId).orElseThrow(
+                () -> new EntityNotFoundException("Post not found with id: " + noticeId));
+        notice.setImageUrl(fileUrl);
+        experienceNoticeRepository.save(notice);
+    }
 }

@@ -26,6 +26,8 @@ public class Post {
     private LocalDateTime updateDate;
     private boolean isUpdated;
     private int views;
+    @Setter
+    private String imageUrl;
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Comment> comments;
     @ManyToOne

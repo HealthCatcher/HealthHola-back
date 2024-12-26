@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -35,6 +36,8 @@ public class Notice {
     private String instruction;
     private int views;
     private int maxParticipants;
+    @Setter
+    private String imageUrl;
 
     @OneToMany(mappedBy = "experienceNotice", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
@@ -72,7 +75,6 @@ public class Notice {
         this.views = 0;
         this.maxParticipants = maxParticipants;
     }
-
 
 
     public void updateNotice(String newTitle, String newContent) {

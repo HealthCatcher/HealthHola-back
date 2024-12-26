@@ -10,7 +10,6 @@ import com.example.hearurbackend.service.S3Uploader;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -45,21 +44,17 @@ public class PostController {
     }
 
     @Operation(summary = "게시글 작성")
-    @PostMapping(value = "/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/post")
     public ResponseEntity<Void> createPost(
             @AuthenticationPrincipal CustomOAuth2User auth,
-            @RequestPart(value = "dto", required = true) PostRequestDto postRequestDto,
-            @RequestPart(value = "image", required = false) MultipartFile imageFile
-    ) throws IOException {
-        if (imageFile != null && !imageFile.isEmpty()) {
-            // 파일 저장 로직 실행
-            String fileName = s3Uploader.upload(imageFile, "HealthHola-Post-Image"); // 예시 함수, 파일을 저장하고 파일 이름을 반환
-        }
+            @RequestBody PostRequestDto postRequestDto
+    ) {
+
         Post newPost = postService.createPost(postRequestDto, auth.getUsername());
         String postNo = newPost.getNo().toString();
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/community/{postNo]}")
+                .path("/community/{postNo}")
                 .buildAndExpand(postNo)
                 .toUri();
         return ResponseEntity.created(location).build();
@@ -105,4 +100,20 @@ public class PostController {
         postService.removeLike(postNo, auth.getUsername());
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "게시글 이미지 업로드")
+    @PostMapping(value = "/post/{postNo}/image", consumes = "multipart/form-data")
+    public ResponseEntity<Void> uploadImage(
+            @PathVariable Long postNo,
+            @RequestPart(value = "image", required = true) MultipartFile imageFile
+    ) throws IOException {
+        if (imageFile != null && !imageFile.isEmpty()) {
+            // 파일 저장 로직 실행
+            String fileUrl = s3Uploader.upload(imageFile, "HealthHola-Post-Image", postNo.toString()); // 예시 함수, 파일을 저장하고 파일 이름을 반환
+            postService.uploadImage(postNo, fileUrl);
+
+        }
+        return ResponseEntity.noContent().build();
+    }
+
 }

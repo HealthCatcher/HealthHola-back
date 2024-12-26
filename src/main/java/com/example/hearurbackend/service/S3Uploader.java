@@ -29,11 +29,11 @@ public class S3Uploader {
         this.bucket = bucket;
     }
 
-    public String upload(MultipartFile multipartFile, String dirName) throws IOException {
+    public String upload(MultipartFile multipartFile, String dirName, String id) throws IOException {
         File file = convert(multipartFile)
                 .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File 변환 실패"));
 
-        return upload(file, dirName);
+        return upload(file, dirName, id);
     }
 
     private Optional<File> convert(MultipartFile file) throws IOException {
@@ -48,8 +48,8 @@ public class S3Uploader {
         return Optional.empty();
     }
 
-    public String upload(File file, String dirName) {
-        String fileName = dirName + "/" + UUID.randomUUID() + "-" + file.getName();
+    public String upload(File file, String dirName, String id) {
+        String fileName = dirName + "/" + id;
         String uploadImageUrl = putS3(file, fileName);
         removeNewFile(file);
         return uploadImageUrl;

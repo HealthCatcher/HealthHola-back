@@ -43,16 +43,11 @@ public class NoticeController {
     }
 
     @Operation(summary = "체험단 공고 작성")
-    @PostMapping(value= "/notice", consumes = "multipart/form-data")
+    @PostMapping(value= "/notice")
     public ResponseEntity<Void> createPost(
             @AuthenticationPrincipal CustomOAuth2User auth,
-            @RequestPart(value="dto", required = true) NoticeRequestDto noticeRequestDto,
-            @RequestPart(value="image", required = false) MultipartFile imageFile
-    ) throws IOException {
-        if (imageFile != null && !imageFile.isEmpty()) {
-            // 파일 저장 로직 실행
-            String fileName = s3Uploader.upload(imageFile, "HealthHola-Notice-Image"); // 예시 함수, 파일을 저장하고 파일 이름을 반환
-        }
+            @RequestBody NoticeRequestDto noticeRequestDto
+    ) {
         Notice newNotice = noticeService.createNotice(noticeRequestDto, auth.getUsername());
         String noticeId = newNotice.getId().toString();
         URI location = ServletUriComponentsBuilder
@@ -111,5 +106,19 @@ public class NoticeController {
     ) {
         List<String> participants = noticeService.getParticipants(noticeId);
         return ResponseEntity.ok(participants);
+    }
+
+    @Operation(summary = "체험단 이미지 업로드")
+    @PostMapping(value="/notice/{noticeId}/image", consumes = "multipart/form-data")
+    public ResponseEntity<Void> uploadImage(
+            @PathVariable UUID noticeId,
+            @RequestParam("image") MultipartFile imageFile
+    ) throws IOException {
+        if (imageFile != null && !imageFile.isEmpty()) {
+            // 파일 저장 로직 실행
+            String fileUrl = s3Uploader.upload(imageFile, "HealthHola-Notice-Image", noticeId.toString()); // 예시 함수, 파일을 저장하고 파일 이름을 반환
+            noticeService.uploadImage(noticeId, fileUrl);
+        }
+        return ResponseEntity.noContent().build();
     }
 }
