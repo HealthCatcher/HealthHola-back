@@ -21,9 +21,10 @@ public class PostResponseDto {
     private final int views;
     private final int likes;
     private final int commentsCount;
+    private final boolean isLiked;
 
     @Builder
-    public PostResponseDto(Long no, String category, String title, String content, String author, LocalDateTime createDate, LocalDateTime updateDate, boolean isUpdated, List<CommentResponseDto> comments, int views, int likes, int commentsCount) {
+    public PostResponseDto(Long no, String category, String title, String content, String author, LocalDateTime createDate, LocalDateTime updateDate, boolean isUpdated, List<CommentResponseDto> comments, int views, int likes, int commentsCount, boolean isLiked) {
         this.no = no;
         this.category = category;
         this.title = title;
@@ -36,5 +37,6 @@ public class PostResponseDto {
         this.views = views;
         this.likes = likes;
         this.commentsCount = commentsCount;
+        this.isLiked = isLiked;
     }
 }

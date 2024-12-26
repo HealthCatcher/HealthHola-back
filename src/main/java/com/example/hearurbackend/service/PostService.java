@@ -1,6 +1,7 @@
 package com.example.hearurbackend.service;
 
 import com.example.hearurbackend.dto.comment.CommentResponseDto;
+import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
 import com.example.hearurbackend.dto.post.PostRequestDto;
 import com.example.hearurbackend.dto.post.PostResponseDto;
 import com.example.hearurbackend.entity.community.Like;
@@ -28,13 +29,14 @@ public class PostService {
     private final UserService userService;
     private final LikeRepository likeRepository;
 
-    public List<PostResponseDto> getPostList() {
+    public List<PostResponseDto> getPostList(CustomOAuth2User auth) {
         List<Post> postEntities = postRepository.findAll();
         return postEntities.stream()
                 .map(post -> {
                     Optional<User> userOptional = userService.getUser(post.getAuthor());
                     String authorNickname = userOptional.map(User::getNickname).orElse("Unknown Author");
-
+                    User user = userService.getUser(auth.getUsername()).orElse(null);
+                    boolean isLiked = user != null && likeRepository.existsByUserAndPost(user, post);
                     return PostResponseDto.builder()
                             .no(post.getNo())
                             .category(post.getCategory())
@@ -45,12 +47,13 @@ public class PostService {
                             .likes(post.getLikesCount())
                             .content(post.getContent())
                             .commentsCount(post.getCommentsCount())
+                            .isLiked(isLiked)
                             .build();
                 })
                 .collect(Collectors.toList());
     }
 
-    public PostResponseDto getPostDetail(Long postNo) {
+    public PostResponseDto getPostDetail(Long postNo, CustomOAuth2User auth) {
         Post post = postRepository.findById(postNo).orElseThrow(() -> new EntityNotFoundException("Post not found with id: " + postNo));
         post.increaseViews();
         postRepository.save(post);
@@ -69,7 +72,8 @@ public class PostService {
 
         Optional<User> userOptional = userService.getUser(post.getAuthor());
         String authorNickname = userOptional.map(User::getNickname).orElse("Unknown Author");
-
+        User user = userService.getUser(auth.getUsername()).orElse(null);
+        boolean isLiked = user != null && likeRepository.existsByUserAndPost(user, post);
         return PostResponseDto.builder()
                 .no(post.getNo())
                 .category(post.getCategory())
@@ -82,6 +86,7 @@ public class PostService {
                 .comments(commentDTOList)
                 .views(post.getViews())
                 .likes(post.getLikesCount())
+                .isLiked(isLiked)
                 .build();
     }
 

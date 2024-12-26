@@ -29,17 +29,20 @@ public class PostController {
 
     @Operation(summary = "게시글 목록 조회")
     @GetMapping("/post")
-    public ResponseEntity<List<PostResponseDto>> getPostList() {
-        List<PostResponseDto> postList = postService.getPostList();
+    public ResponseEntity<List<PostResponseDto>> getPostList(
+            @AuthenticationPrincipal CustomOAuth2User auth
+    ) {
+        List<PostResponseDto> postList = postService.getPostList(auth);
         return ResponseEntity.ok(postList);
     }
 
     @Operation(summary = "게시글 상세 조회")
     @GetMapping("/post/{postNo}")
     public ResponseEntity<PostResponseDto> getPostDetail(
-            @PathVariable Long postNo
+            @PathVariable Long postNo,
+            @AuthenticationPrincipal CustomOAuth2User auth
     ) {
-        PostResponseDto responseDTO = postService.getPostDetail(postNo);
+        PostResponseDto responseDTO = postService.getPostDetail(postNo, auth);
         return ResponseEntity.ok(responseDTO);
     }
 
@@ -115,5 +118,4 @@ public class PostController {
         }
         return ResponseEntity.noContent().build();
     }
-
 }
