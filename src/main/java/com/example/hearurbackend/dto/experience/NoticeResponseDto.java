@@ -29,4 +29,5 @@ public class NoticeResponseDto {
     private final List<String> participantsList;
     private final String campaignDetails;
     private final String instruction;
+    private final int favoriteCount;
 }

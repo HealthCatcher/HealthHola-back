@@ -3,9 +3,11 @@ package com.example.hearurbackend.entity.survey;
 import com.example.hearurbackend.entity.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
+@NoArgsConstructor
 public class UserResponse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -64,6 +64,14 @@ public class User {
     @ManyToMany(mappedBy = "participants")
     private List<Notice> participatedExperiences = new ArrayList<>();
 
+    @ManyToMany
+    @JoinTable(
+            name = "user_favorite_notices",
+            joinColumns = @JoinColumn(name = "userId"),
+            inverseJoinColumns = @JoinColumn(name = "noticeId")
+    )
+    private Set<Notice> favoriteNotices = new HashSet<>();
+
     public User(String username, String password, String name, String email, UserRole role, String nickname) {
         this.username = username;
         this.password = password;

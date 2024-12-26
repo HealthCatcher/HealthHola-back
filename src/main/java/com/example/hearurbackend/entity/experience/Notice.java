@@ -50,6 +50,10 @@ public class Notice {
     @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Report> reports = new ArrayList<>();
 
+    @ManyToMany(mappedBy = "favoriteNotices")
+    private Set<User> favoriteUsers = new HashSet<>();
+
+
 
     @Builder
     public Notice(User author, String category, String title, String location, LocalDateTime createDate, LocalDateTime startDate, LocalDateTime endDate, String company, String content, int price, String campaignDetails, String instruction, int maxParticipants) {
@@ -86,5 +90,9 @@ public class Notice {
 
     public void increaseViews() {
         this.views++;
+    }
+
+    public int getFavoritesCount() {
+        return favoriteUsers.size();
     }
 }
