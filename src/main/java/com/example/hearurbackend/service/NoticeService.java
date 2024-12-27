@@ -1,5 +1,6 @@
 package com.example.hearurbackend.service;
 
+import com.example.hearurbackend.domain.UserRole;
 import com.example.hearurbackend.dto.experience.NoticeRequestDto;
 import com.example.hearurbackend.dto.experience.NoticeResponseDto;
 import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
@@ -14,7 +15,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -160,12 +163,60 @@ public class NoticeService {
     }
 
     public void applyNotice(UUID noticeId, String username) {
-        Notice notice = experienceNoticeRepository.findById(noticeId).orElseThrow(
-                () -> new EntityNotFoundException("Post not found with id: " + noticeId));
-        User user = userService.getUser(username).orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
-        ParticipantEntry participantEntry = participantEntryRepository.findByNoticeAndUser(notice, user).orElse(new ParticipantEntry(notice, user));
+        Notice notice = experienceNoticeRepository.findById(noticeId)
+                .orElseThrow(() -> new EntityNotFoundException("Post not found with id: " + noticeId));
+        User user = userService.getUser(username)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
+
+        ParticipantEntry participantEntry = participantEntryRepository.findByNoticeAndUser(notice, user)
+                .orElse(new ParticipantEntry(notice, user));
+
+//        try {
+//            if (!isEligibleForNewEntry(participantEntry, user)) {
+//                throw new IllegalStateException("You have already applied for this notice today.");
+//            }
+//        } catch (IllegalStateException e) {
+//            throw new IllegalStateException(e.getMessage() + " " + getTimeUntilNextEntry(participantEntry, user));
+//        }
+
         participantEntry.increaseEntryCount();
         participantEntryRepository.save(participantEntry);
+    }
+
+    private boolean isEligibleForNewEntry(ParticipantEntry participantEntry, User user) {
+        LocalDateTime lastEntryTime = participantEntry.getLastEntryDate();
+        LocalDateTime now = LocalDateTime.now();
+        // 먼저 날짜가 변경되었는지 확인
+        if (!lastEntryTime.toLocalDate().equals(now.toLocalDate())) {
+            return true;
+        }
+        // 같은 날이라면, 프리미엄 사용자의 경우에는 1시간 간격 확인
+        if (user.getRole() == UserRole.ROLE_PREMIUM) {
+            return Duration.between(lastEntryTime, now).toHours() >= 1;
+        }
+        // 일반 사용자는 같은 날 다시 응모할 수 없음
+        return false;
+    }
+
+    private String getTimeUntilNextEntry(ParticipantEntry participantEntry, User user) {
+        LocalDateTime lastEntryTime = participantEntry.getLastEntryDate();
+
+        // 다음날 자정
+        LocalDateTime nextDayMidnight = lastEntryTime.toLocalDate().atStartOfDay().plusDays(1);
+        LocalDateTime nextAvailableTime;
+
+        if (user.getRole() == UserRole.ROLE_PREMIUM) {
+            LocalDateTime oneHourAfterLastEntry = lastEntryTime.plusHours(1);
+            nextAvailableTime = oneHourAfterLastEntry.isBefore(nextDayMidnight) ? oneHourAfterLastEntry : nextDayMidnight;
+        } else {
+            nextAvailableTime = nextDayMidnight;
+        }
+        return formatNextAvailableTime(nextAvailableTime);
+    }
+
+    private String formatNextAvailableTime(LocalDateTime dateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        return dateTime.format(formatter);
     }
 
 
