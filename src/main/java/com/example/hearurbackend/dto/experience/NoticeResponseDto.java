@@ -31,4 +31,5 @@ public class NoticeResponseDto {
     private final String instruction;
     private final int favoriteCount;
     private final boolean isFavorite;
+    private final String imageUrl;
 }

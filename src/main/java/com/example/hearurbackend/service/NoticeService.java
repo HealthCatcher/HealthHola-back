@@ -68,6 +68,7 @@ public class NoticeService {
                             .participants(notice.getParticipantEntries().size())
                             .favoriteCount(notice.getFavoritesCount())
                             .isFavorite(isLiked)
+                            .imageUrl(notice.getImageUrl())
                             .build();
                 })
                 .collect(Collectors.toList()).reversed();
@@ -103,6 +104,7 @@ public class NoticeService {
                     .campaignDetails(notice.getCampaignDetails())
                     .instruction(notice.getInstruction())
                     .favoriteCount(notice.getFavoritesCount())
+                    .imageUrl(notice.getImageUrl())
                     .build();
         }
         boolean isFavorite = userService.getUser(auth.getUsername()).map(user -> user.getFavoriteNotices().contains(notice)).orElse(false);
