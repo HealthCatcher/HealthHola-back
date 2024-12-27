@@ -164,6 +164,7 @@ public class NoticeService {
                 () -> new EntityNotFoundException("Post not found with id: " + noticeId));
         User user = userService.getUser(username).orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
         ParticipantEntry participantEntry = participantEntryRepository.findByNoticeAndUser(notice, user).orElse(new ParticipantEntry(notice, user));
+        participantEntry.increaseEntryCount();
         participantEntryRepository.save(participantEntry);
     }
 

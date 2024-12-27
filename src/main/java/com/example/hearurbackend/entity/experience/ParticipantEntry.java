@@ -28,7 +28,12 @@ public class ParticipantEntry {
     public ParticipantEntry(Notice notice, User user){
         this.notice = notice;
         this.user = user;
-        this.entryCount = 1;
+        this.entryCount = 0;
+        this.lastEntryDate = LocalDateTime.now();
+    }
+
+    public void increaseEntryCount(){
+        this.entryCount++;
         this.lastEntryDate = LocalDateTime.now();
     }
 }
