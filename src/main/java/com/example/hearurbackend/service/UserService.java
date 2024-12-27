@@ -49,7 +49,7 @@ public class UserService {
                             .endDate(notice.getEndDate())
                             .views(notice.getViews())
                             .maxParticipants(notice.getMaxParticipants())
-                            .participants(notice.getParticipants().size())
+                            .participants(notice.getParticipantEntries().size())
                             .favoriteCount(notice.getFavoritesCount())
                             .build();
                 })
