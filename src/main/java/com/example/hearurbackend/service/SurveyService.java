@@ -1,5 +1,6 @@
 package com.example.hearurbackend.service;
 
+import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
 import com.example.hearurbackend.dto.survey.CreateQuestionRequestDto;
 import com.example.hearurbackend.dto.survey.QuestionResponseDto;
 import com.example.hearurbackend.entity.survey.AnswerOption;
@@ -18,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -60,11 +63,19 @@ public class SurveyService {
         userResponseRepository.save(userResponse);
     }
 
-    public List<QuestionResponseDto> getQuestionList() {
+    public List<QuestionResponseDto> getQuestionList(CustomOAuth2User auth) {
         return questionRepository.findAll().stream()
-                .map(QuestionResponseDto::new)
+                .map(question -> {
+                    boolean isAnswered = question.getUserResponses().stream()
+                            .anyMatch(response -> response.getUser().getUsername().equals(auth.getUsername()));
+                    int totalParticipants = question.getUserResponses().size();
+                    Map<AnswerOption, Long> optionCounts = question.getUserResponses().stream()
+                            .collect(Collectors.groupingBy(UserResponse::getSelectedOption, Collectors.counting()));
+                    return new QuestionResponseDto(question, optionCounts, totalParticipants, isAnswered);
+                })
                 .toList();
     }
+
 
     public void deleteQuestion(String username, Long questionId) {
         if (!userService.isUserAdmin(username)) {
@@ -74,5 +85,17 @@ public class SurveyService {
                 () -> new IllegalArgumentException("Question not found with id: " + questionId)
         );
         questionRepository.delete(question);
+    }
+
+    public QuestionResponseDto getQuestionDetail(Long questionId, CustomOAuth2User auth) {
+        Question question = questionRepository.findById(questionId).orElseThrow(
+                () -> new IllegalArgumentException("Question not found with id: " + questionId)
+        );
+        boolean isAnswered = question.getUserResponses().stream()
+                .anyMatch(response -> response.getUser().getUsername().equals(auth.getUsername()));
+        int totalParticipants = question.getUserResponses().size();
+        Map<AnswerOption, Long> optionCounts = question.getUserResponses().stream()
+                .collect(Collectors.groupingBy(UserResponse::getSelectedOption, Collectors.counting()));
+        return new QuestionResponseDto(question, optionCounts, totalParticipants, isAnswered);
     }
 }

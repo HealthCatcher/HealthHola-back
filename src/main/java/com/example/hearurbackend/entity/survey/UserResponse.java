@@ -34,5 +34,4 @@ public class UserResponse {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid answer index"));
     }
 
-    // Constructors, Getters, and Setters
 }

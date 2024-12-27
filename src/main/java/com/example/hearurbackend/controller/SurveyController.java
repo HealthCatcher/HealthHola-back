@@ -44,11 +44,23 @@ public class SurveyController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "질문 조회")
+    @Operation(summary = "질문 전체 조회")
     @GetMapping("/question")
-    public ResponseEntity<List<QuestionResponseDto>> getQuestion() {
-        List<QuestionResponseDto> QuestionList = surveyService.getQuestionList();
+    public ResponseEntity<List<QuestionResponseDto>> getQuestion(
+            @AuthenticationPrincipal CustomOAuth2User auth
+    ) {
+        List<QuestionResponseDto> QuestionList = surveyService.getQuestionList(auth);
         return ResponseEntity.ok(QuestionList);
+    }
+
+    @Operation(summary = "질문 상세 조회")
+    @GetMapping("/question/{questionId}")
+    public ResponseEntity<QuestionResponseDto> getQuestionDetail(
+            @PathVariable Long questionId,
+            @AuthenticationPrincipal CustomOAuth2User auth
+    ) {
+        QuestionResponseDto responseDTO = surveyService.getQuestionDetail(questionId,auth);
+        return ResponseEntity.ok(responseDTO);
     }
 
     @Operation(summary = "질문 삭제")
