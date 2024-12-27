@@ -1,5 +1,6 @@
 package com.example.hearurbackend.entity.coupon;
 
+import com.example.hearurbackend.domain.CouponType;
 import com.example.hearurbackend.entity.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -27,6 +28,7 @@ public class Coupon {
 
     // 쿠폰 사용 일자
     private LocalDateTime usedAt;
+    private CouponType type;
 
     // 쿠폰 사용 메서드
 

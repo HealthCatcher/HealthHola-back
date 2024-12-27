@@ -108,4 +108,12 @@ public class User {
     public boolean isAdmin() {
         return this.role == UserRole.ROLE_ADMIN;
     }
+
+    public void usePremiumCoupon() {
+        this.role = UserRole.ROLE_PREMIUM;
+    }
+
+    public void usePriorityCoupon() {
+        this.role = UserRole.ROLE_PRIORITY;
+    }
 }

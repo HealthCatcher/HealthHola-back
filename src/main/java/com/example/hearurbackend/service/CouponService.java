@@ -6,12 +6,12 @@ import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
 import com.example.hearurbackend.entity.coupon.Coupon;
 import com.example.hearurbackend.entity.user.User;
 import com.example.hearurbackend.repository.CouponRepository;
+import com.example.hearurbackend.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -20,6 +20,7 @@ import java.util.List;
 public class CouponService {
     private final CouponRepository couponRepository;
     private final UserService userService;
+    private final UserRepository userRepository;
 
     // 쿠폰 사용 메서드
     @Transactional
@@ -30,11 +31,18 @@ public class CouponService {
         // 쿠폰 사용 처리
         User user = userService.getUser(userId).orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다: " + userId));
 
-        if(coupon.isExpired() || coupon.isUsed()) {
-            throw new IllegalStateException("이미 사용된 쿠폰입니다.");
+        validateCoupon(coupon);
+
+        switch (coupon.getType()) {
+            case PREMIUM:
+                user.usePremiumCoupon();
+                break;
+            case PRIORITY:
+                user.usePriorityCoupon();
+                break;
         }
         coupon.useCoupon();
-        // 변경 사항 저장
+        userRepository.save(user);
         couponRepository.save(coupon);
     }
 
@@ -68,5 +76,10 @@ public class CouponService {
         return couponRepository.findAll().stream()
                 .map(CouponResponseDto::new)
                 .toList();
+    }
+    private void validateCoupon(Coupon coupon) {
+        if (coupon.isExpired() || coupon.isUsed()) {
+            throw new IllegalStateException("이미 사용된 쿠폰이거나 만료된 쿠폰입니다.");
+        }
     }
 }

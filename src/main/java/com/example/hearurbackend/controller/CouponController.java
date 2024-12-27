@@ -18,7 +18,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class CouponController {
-    private static final Logger log = LoggerFactory.getLogger(CouponController.class);
     private final CouponService couponService;
     @Operation(summary = "쿠폰 사용")
     @PutMapping("/coupon/{coupon_code}")
