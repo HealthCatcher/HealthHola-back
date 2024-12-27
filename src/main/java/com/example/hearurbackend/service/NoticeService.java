@@ -125,6 +125,7 @@ public class NoticeService {
                 .instruction(notice.getInstruction())
                 .favoriteCount(notice.getFavoritesCount())
                 .isFavorite(isFavorite)
+                .imageUrl(notice.getImageUrl())
                 .build();
     }
 
