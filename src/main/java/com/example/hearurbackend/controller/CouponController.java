@@ -6,8 +6,6 @@ import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
 import com.example.hearurbackend.service.CouponService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
