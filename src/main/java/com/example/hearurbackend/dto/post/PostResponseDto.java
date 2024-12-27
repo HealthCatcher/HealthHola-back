@@ -22,9 +22,10 @@ public class PostResponseDto {
     private final int likes;
     private final int commentsCount;
     private final boolean isLiked;
+    private final String imageUrl;
 
     @Builder
-    public PostResponseDto(Long no, String category, String title, String content, String author, LocalDateTime createDate, LocalDateTime updateDate, boolean isUpdated, List<CommentResponseDto> comments, int views, int likes, int commentsCount, boolean isLiked) {
+    public PostResponseDto(Long no, String category, String title, String content, String author, LocalDateTime createDate, LocalDateTime updateDate, boolean isUpdated, List<CommentResponseDto> comments, int views, int likes, int commentsCount, boolean isLiked, String imageUrl) {
         this.no = no;
         this.category = category;
         this.title = title;
@@ -38,5 +39,6 @@ public class PostResponseDto {
         this.likes = likes;
         this.commentsCount = commentsCount;
         this.isLiked = isLiked;
+        this.imageUrl = imageUrl;
     }
 }
