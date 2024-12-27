@@ -30,9 +30,10 @@ public class CouponService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 쿠폰을 찾을 수 없습니다: " + couponCode));
         // 쿠폰 사용 처리
         User user = userService.getUser(userId).orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다: " + userId));
-
+        if (user.isCouponUsed()) {
+            throw new IllegalStateException("이미 쿠폰 사용자입니다.");
+        }
         validateCoupon(coupon);
-
         switch (coupon.getType()) {
             case PREMIUM:
                 user.usePremiumCoupon();

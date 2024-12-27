@@ -14,6 +14,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -73,6 +74,8 @@ public class User {
     )
     private Set<Notice> favoriteNotices = new HashSet<>();
 
+    private LocalDateTime couponExpirationDate;
+
     public User(String username, String password, String name, String email, UserRole role, String nickname) {
         this.username = username;
         this.password = password;
@@ -111,9 +114,15 @@ public class User {
 
     public void usePremiumCoupon() {
         this.role = UserRole.ROLE_PREMIUM;
+        this.couponExpirationDate = LocalDateTime.now().plusMonths(3);
     }
 
     public void usePriorityCoupon() {
         this.role = UserRole.ROLE_PRIORITY;
+        this.couponExpirationDate = LocalDateTime.now().plusMonths(3);
+    }
+
+    public boolean isCouponUsed() {
+        return this.role == UserRole.ROLE_PREMIUM || this.role == UserRole.ROLE_PRIORITY;
     }
 }
