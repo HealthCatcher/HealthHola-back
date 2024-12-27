@@ -8,7 +8,6 @@ import com.example.hearurbackend.entity.community.Post;
 import com.example.hearurbackend.service.PostService;
 import com.example.hearurbackend.service.S3Uploader;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
