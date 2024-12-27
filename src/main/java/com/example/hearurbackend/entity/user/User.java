@@ -138,4 +138,8 @@ public class User {
     public void suspendAccount(int days) {
         this.accountSuspensionDate = LocalDateTime.now().plusDays(days);
     }
+
+    public void unsuspendAccount() {
+        this.accountSuspensionDate = null;
+    }
 }

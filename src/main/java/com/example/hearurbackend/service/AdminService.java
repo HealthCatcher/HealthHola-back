@@ -21,4 +21,21 @@ public class AdminService {
         user.suspendAccount(suspendUserDto.getDays());
         userRepository.save(user);
     }
+
+    public void unsuspendUser(String username, SuspendUserDto suspendUserDto) {
+        if (!userService.isUserAdmin(username)) {
+            throw new IllegalStateException("권한이 없습니다.");
+        }
+        User user = userService.getUser(suspendUserDto.getUsername()).orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다: " + suspendUserDto.getUsername()));
+        user.unsuspendAccount();
+        userRepository.save(user);
+    }
+
+    public void deleteUser(String username, SuspendUserDto suspendUserDto) {
+        if (!userService.isUserAdmin(username)) {
+            throw new IllegalStateException("권한이 없습니다.");
+        }
+        User user = userService.getUser(suspendUserDto.getUsername()).orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다: " + suspendUserDto.getUsername()));
+        userRepository.delete(user);
+    }
 }
