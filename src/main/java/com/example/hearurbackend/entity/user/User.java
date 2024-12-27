@@ -75,6 +75,11 @@ public class User {
     private Set<Notice> favoriteNotices = new HashSet<>();
 
     private LocalDateTime couponExpirationDate;
+    private LocalDateTime createdAt;
+    private LocalDateTime accountExpiredAt;
+    private LocalDateTime lastLoginAt;
+    private LocalDateTime lastPasswordChangedAt;
+    private LocalDateTime accountSuspensionDate;
 
     public User(String username, String password, String name, String email, UserRole role, String nickname) {
         this.username = username;
@@ -84,6 +89,8 @@ public class User {
         this.role = role;
         this.nickname = nickname;
         this.point = 0;
+        this.createdAt = LocalDateTime.now();
+        this.accountExpiredAt = LocalDateTime.now().plusYears(3);
     }
 
 
@@ -94,6 +101,8 @@ public class User {
         this.role = role;
         this.nickname = name;
         this.point = 0;
+        this.createdAt = LocalDateTime.now();
+        this.accountExpiredAt = LocalDateTime.now().plusYears(3);
     }
 
     public void updateOAuthUser(String email, String name) {
@@ -124,5 +133,9 @@ public class User {
 
     public boolean isCouponUsed() {
         return this.role == UserRole.ROLE_PREMIUM || this.role == UserRole.ROLE_PRIORITY;
+    }
+
+    public void suspendAccount(int days) {
+        this.accountSuspensionDate = LocalDateTime.now().plusDays(days);
     }
 }
