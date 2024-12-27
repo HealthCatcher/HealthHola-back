@@ -62,7 +62,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Review> reviews = new ArrayList<>();
 
-    @OneToMany(mappedBy = "participants")
+    @OneToMany(mappedBy = "user")
     private List<ParticipantEntry> participatedExperiences = new ArrayList<>();
 
     @ManyToMany
