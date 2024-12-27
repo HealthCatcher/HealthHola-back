@@ -5,8 +5,10 @@ import com.example.hearurbackend.dto.experience.NoticeResponseDto;
 import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
 import com.example.hearurbackend.dto.review.ReviewResponseDto;
 import com.example.hearurbackend.entity.experience.Notice;
+import com.example.hearurbackend.entity.experience.ParticipantEntry;
 import com.example.hearurbackend.entity.user.User;
 import com.example.hearurbackend.repository.ExperienceNoticeRepository;
+import com.example.hearurbackend.repository.ParticipantEntryRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 public class NoticeService {
     private final ExperienceNoticeRepository experienceNoticeRepository;
     private final UserService userService;
+    private final ParticipantEntryRepository participantEntryRepository;
     public List<NoticeResponseDto> getNoticeList(CustomOAuth2User auth) {
         List<Notice> noticeEntities = experienceNoticeRepository.findAll();
         return noticeEntities.stream()
@@ -42,7 +45,7 @@ public class NoticeService {
                                 .endDate(notice.getEndDate())
                                 .views(notice.getViews())
                                 .maxParticipants(notice.getMaxParticipants())
-                                .participants(notice.getParticipants().size())
+                                .participants(notice.getParticipantEntries().size())
                                 .favoriteCount(notice.getFavoritesCount())
                                 .build();
                     }
@@ -59,7 +62,7 @@ public class NoticeService {
                             .endDate(notice.getEndDate())
                             .views(notice.getViews())
                             .maxParticipants(notice.getMaxParticipants())
-                            .participants(notice.getParticipants().size())
+                            .participants(notice.getParticipantEntries().size())
                             .favoriteCount(notice.getFavoritesCount())
                             .isFavorite(isLiked)
                             .build();
@@ -92,7 +95,7 @@ public class NoticeService {
                     .endDate(notice.getEndDate())
                     .reviews(reviewDTOList)
                     .views(notice.getViews())
-                    .participants(notice.getParticipants().size())
+                    .participants(notice.getParticipantEntries().size())
                     .maxParticipants(notice.getMaxParticipants())
                     .campaignDetails(notice.getCampaignDetails())
                     .instruction(notice.getInstruction())
@@ -111,7 +114,7 @@ public class NoticeService {
                 .endDate(notice.getEndDate())
                 .reviews(reviewDTOList)
                 .views(notice.getViews())
-                .participants(notice.getParticipants().size())
+                .participants(notice.getParticipantEntries().size())
                 .maxParticipants(notice.getMaxParticipants())
                 .campaignDetails(notice.getCampaignDetails())
                 .instruction(notice.getInstruction())
@@ -160,23 +163,25 @@ public class NoticeService {
         Notice notice = experienceNoticeRepository.findById(noticeId).orElseThrow(
                 () -> new EntityNotFoundException("Post not found with id: " + noticeId));
         User user = userService.getUser(username).orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
-        notice.addParticipant(user);
-        experienceNoticeRepository.save(notice);
+        ParticipantEntry participantEntry = participantEntryRepository.findByNoticeAndUser(notice, user).orElse(new ParticipantEntry(notice, user));
+        participantEntryRepository.save(participantEntry);
     }
+
+
 
     public void cancelApplyNotice(UUID noticeId, String username) {
         Notice notice = experienceNoticeRepository.findById(noticeId).orElseThrow(
                 () -> new EntityNotFoundException("Post not found with id: " + noticeId));
         User user = userService.getUser(username).orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
-        notice.removeParticipant(user);
-        experienceNoticeRepository.save(notice);
+        ParticipantEntry participantEntry = participantEntryRepository.findByNoticeAndUser(notice, user).orElseThrow(() -> new EntityNotFoundException("Participant entry not found"));
+        participantEntryRepository.delete(participantEntry);
     }
 
     public List<String> getParticipants(UUID noticeId) {
         Notice notice = experienceNoticeRepository.findById(noticeId).orElseThrow(
                 () -> new EntityNotFoundException("Post not found with id: " + noticeId));
-        return notice.getParticipants().stream()
-                .map(User::getUsername)
+        return notice.getParticipantEntries().stream()
+                .map(participantEntry -> participantEntry.getUser().getUsername())
                 .collect(Collectors.toList());
     }
 

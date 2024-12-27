@@ -42,13 +42,8 @@ public class Notice {
     @OneToMany(mappedBy = "experienceNotice", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "experience_participants",
-            joinColumns = @JoinColumn(name = "experience_id"),
-            inverseJoinColumns = @JoinColumn(name = "username")
-    )
-    private Set<User> participants = new HashSet<>();
+    @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ParticipantEntry> participantEntries = new ArrayList<>();
 
     @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Report> reports = new ArrayList<>();
@@ -80,14 +75,6 @@ public class Notice {
     public void updateNotice(String newTitle, String newContent) {
         this.title = newTitle;
         this.content = newContent;
-    }
-
-    public void addParticipant(User user) {
-        participants.add(user);
-    }
-
-    public void removeParticipant(User user) {
-        participants.remove(user);
     }
 
     public void increaseViews() {

@@ -8,6 +8,7 @@ import com.example.hearurbackend.entity.community.Post;
 import com.example.hearurbackend.entity.diagnosis.HealthRecord;
 import com.example.hearurbackend.entity.diagnosis.Lifestyle;
 import com.example.hearurbackend.entity.experience.Notice;
+import com.example.hearurbackend.entity.experience.ParticipantEntry;
 import com.example.hearurbackend.entity.experience.Review;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -61,8 +62,8 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Review> reviews = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "participants")
-    private List<Notice> participatedExperiences = new ArrayList<>();
+    @OneToMany(mappedBy = "participants")
+    private List<ParticipantEntry> participatedExperiences = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
