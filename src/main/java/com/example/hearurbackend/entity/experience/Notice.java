@@ -36,8 +36,12 @@ public class Notice {
     private String instruction;
     private int views;
     private int maxParticipants;
-    @Setter
-    private String imageUrl;
+
+    @ElementCollection
+    private List<String> titleImageUrl;
+
+    @ElementCollection
+    private List<String> detailImageUrls;
 
     @OneToMany(mappedBy = "experienceNotice", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
@@ -88,5 +92,13 @@ public class Notice {
     public void addFavoriteUser(User user) {
         this.favoriteUsers.add(user);
         user.getFavoriteNotices().add(this);
+    }
+
+    public void addTitleImageUrl(String fileUrl) {
+        this.titleImageUrl.add(fileUrl);
+    }
+
+    public void addDetailImageUrl(String fileUrl) {
+        this.detailImageUrls.add(fileUrl);
     }
 }

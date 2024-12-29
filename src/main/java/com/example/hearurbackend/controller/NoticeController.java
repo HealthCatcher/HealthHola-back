@@ -121,7 +121,7 @@ public class NoticeController {
             // 파일 저장 로직 실행
             String folderPath = "HealthHola-Notice-Image/" + noticeId.toString() + "/title";
             String fileUrl = s3Uploader.upload(imageFile, folderPath);
-            noticeService.uploadImage(noticeId, fileUrl);
+            noticeService.uploadImage(noticeId, fileUrl, 0);
         }
         return ResponseEntity.noContent().build();
     }
@@ -135,7 +135,7 @@ public class NoticeController {
         if (imageFile != null && !imageFile.isEmpty()) {
             // 파일 저장 로직 실행
             String fileUrl = s3Uploader.upload(imageFile, "HealthHola-Notice-Image/"+noticeId.toString()+"/details"); // 예시 함수, 파일을 저장하고 파일 이름을 반환
-            noticeService.uploadImage(noticeId, fileUrl);
+            noticeService.uploadImage(noticeId, fileUrl, 1);
         }
         return ResponseEntity.noContent().build();
     }

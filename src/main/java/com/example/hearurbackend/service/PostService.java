@@ -46,7 +46,7 @@ public class PostService {
                                 .likes(post.getLikesCount())
                                 .content(post.getContent())
                                 .commentsCount(post.getCommentsCount())
-                                .imageUrl(post.getImageUrl())
+                                .imageUrls(post.getImageUrl())
                                 .build();
                     }
                     User user = userService.getUser(auth.getUsername()).orElse(null);
@@ -62,7 +62,7 @@ public class PostService {
                             .content(post.getContent())
                             .commentsCount(post.getCommentsCount())
                             .isLiked(isLiked)
-                            .imageUrl(post.getImageUrl())
+                            .imageUrls(post.getImageUrl())
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -100,7 +100,7 @@ public class PostService {
                     .comments(commentDTOList)
                     .views(post.getViews())
                     .likes(post.getLikesCount())
-                    .imageUrl(post.getImageUrl())
+                    .imageUrls(post.getImageUrl())
                     .build();
         }
         User user = userService.getUser(auth.getUsername()).orElse(null);
@@ -118,7 +118,7 @@ public class PostService {
                 .views(post.getViews())
                 .likes(post.getLikesCount())
                 .isLiked(isLiked)
-                .imageUrl(post.getImageUrl())
+                .imageUrls(post.getImageUrl())
                 .build();
     }
 
@@ -187,7 +187,7 @@ public class PostService {
     public void uploadImage(Long postNo, String fileUrl) {
         Post post = postRepository.findById(postNo).orElseThrow(
                 () -> new EntityNotFoundException("Post not found with id: " + postNo));
-        post.setImageUrl(fileUrl);
+        post.addImageUrl(fileUrl);
         postRepository.save(post);
     }
 }

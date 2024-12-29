@@ -70,7 +70,8 @@ public class NoticeService {
                             .participants(notice.getParticipantEntries().size())
                             .favoriteCount(notice.getFavoritesCount())
                             .isFavorite(isLiked)
-                            .imageUrl(notice.getImageUrl())
+                            .titleImageUrls(notice.getTitleImageUrl())
+                            .detailImageUrls(notice.getDetailImageUrls())
                             .build();
                 })
                 .collect(Collectors.toList()).reversed();
@@ -106,7 +107,8 @@ public class NoticeService {
                     .campaignDetails(notice.getCampaignDetails())
                     .instruction(notice.getInstruction())
                     .favoriteCount(notice.getFavoritesCount())
-                    .imageUrl(notice.getImageUrl())
+                    .titleImageUrls(notice.getTitleImageUrl())
+                    .detailImageUrls(notice.getDetailImageUrls())
                     .build();
         }
         boolean isFavorite = userService.getUser(auth.getUsername()).map(user -> user.getFavoriteNotices().contains(notice)).orElse(false);
@@ -127,7 +129,8 @@ public class NoticeService {
                 .instruction(notice.getInstruction())
                 .favoriteCount(notice.getFavoritesCount())
                 .isFavorite(isFavorite)
-                .imageUrl(notice.getImageUrl())
+                .titleImageUrls(notice.getTitleImageUrl())
+                .detailImageUrls(notice.getDetailImageUrls())
                 .build();
     }
 
@@ -247,10 +250,19 @@ public class NoticeService {
                 () -> new EntityNotFoundException("Post not found with id: " + noticeId));
     }
 
-    public void uploadImage(UUID noticeId, String fileUrl) {
+    public void uploadImage(UUID noticeId, String fileUrl, int index) {
         Notice notice = experienceNoticeRepository.findById(noticeId).orElseThrow(
                 () -> new EntityNotFoundException("Notice not found with id: " + noticeId));
-        notice.setImageUrl(fileUrl);
+        switch (index) {
+            case 0:
+                notice.addTitleImageUrl(fileUrl);
+                break;
+            case 1:
+                notice.addDetailImageUrl(fileUrl);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid index: " + index);
+        }
         experienceNoticeRepository.save(notice);
     }
 

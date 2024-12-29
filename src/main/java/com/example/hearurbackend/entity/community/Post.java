@@ -26,8 +26,10 @@ public class Post {
     private LocalDateTime updateDate;
     private boolean isUpdated;
     private int views;
-    @Setter
-    private String imageUrl;
+
+    @ElementCollection
+    private List<String> imageUrl;
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Comment> comments;
     @ManyToOne
@@ -68,5 +70,9 @@ public class Post {
 
     public int getCommentsCount() {
         return comments.size();
+    }
+
+    public void addImageUrl(String imageUrl) {
+        this.imageUrl.add(imageUrl);
     }
 }
