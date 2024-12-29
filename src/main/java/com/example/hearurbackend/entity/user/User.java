@@ -147,4 +147,8 @@ public class User {
         notice.getFavoriteUsers().add(this);  // Notice 쪽의 리스트에도 User를 추가
     }
 
+    public void removeFavoriteNotice(Notice notice) {
+        this.favoriteNotices.remove(notice);
+        notice.getFavoriteUsers().remove(this);  // Notice 쪽의 리스트에서 User를 제거
+    }
 }

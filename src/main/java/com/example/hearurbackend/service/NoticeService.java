@@ -275,4 +275,14 @@ public class NoticeService {
         experienceNoticeRepository.save(notice);
         userRepository.save(user); // 변경사항을 User에도 반영
     }
+
+    public void cancelFavoriteNotice(UUID noticeId, String username) {
+        Notice notice = experienceNoticeRepository.findById(noticeId).orElseThrow(
+                () -> new EntityNotFoundException("Post not found with id: " + noticeId));
+        User user = userService.getUser(username).orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
+
+        user.removeFavoriteNotice(notice); // User 객체의 메소드를 사용하여 Notice를 제거함으로써 양방향 동기화 처리
+        experienceNoticeRepository.save(notice);
+        userRepository.save(user); // 변경사항을 User에도 반영
+    }
 }
