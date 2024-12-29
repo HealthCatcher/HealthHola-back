@@ -142,4 +142,9 @@ public class User {
     public void unsuspendAccount() {
         this.accountSuspensionDate = null;
     }
+    public void addFavoriteNotice(Notice notice) {
+        this.favoriteNotices.add(notice);
+        notice.getFavoriteUsers().add(this);  // Notice 쪽의 리스트에도 User를 추가
+    }
+
 }

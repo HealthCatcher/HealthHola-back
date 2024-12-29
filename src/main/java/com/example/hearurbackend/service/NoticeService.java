@@ -10,6 +10,7 @@ import com.example.hearurbackend.entity.experience.ParticipantEntry;
 import com.example.hearurbackend.entity.user.User;
 import com.example.hearurbackend.repository.ExperienceNoticeRepository;
 import com.example.hearurbackend.repository.ParticipantEntryRepository;
+import com.example.hearurbackend.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ public class NoticeService {
     private final ExperienceNoticeRepository experienceNoticeRepository;
     private final UserService userService;
     private final ParticipantEntryRepository participantEntryRepository;
+    private final UserRepository userRepository;
     public List<NoticeResponseDto> getNoticeList(CustomOAuth2User auth) {
         List<Notice> noticeEntities = experienceNoticeRepository.findAll();
         return noticeEntities.stream()
@@ -247,7 +249,7 @@ public class NoticeService {
 
     public void uploadImage(UUID noticeId, String fileUrl) {
         Notice notice = experienceNoticeRepository.findById(noticeId).orElseThrow(
-                () -> new EntityNotFoundException("Post not found with id: " + noticeId));
+                () -> new EntityNotFoundException("Notice not found with id: " + noticeId));
         notice.setImageUrl(fileUrl);
         experienceNoticeRepository.save(notice);
     }
@@ -256,7 +258,9 @@ public class NoticeService {
         Notice notice = experienceNoticeRepository.findById(noticeId).orElseThrow(
                 () -> new EntityNotFoundException("Post not found with id: " + noticeId));
         User user = userService.getUser(username).orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
-        notice.addFavoriteUser(user);
+
+        user.addFavoriteNotice(notice); // User 객체의 메소드를 사용하여 Notice를 추가함으로써 양방향 동기화 처리
         experienceNoticeRepository.save(notice);
+        userRepository.save(user); // 변경사항을 User에도 반영
     }
 }

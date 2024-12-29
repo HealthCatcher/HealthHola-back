@@ -86,6 +86,7 @@ public class Notice {
     }
 
     public void addFavoriteUser(User user) {
-        favoriteUsers.add(user);
+        this.favoriteUsers.add(user);
+        user.getFavoriteNotices().add(this);
     }
 }
