@@ -107,11 +107,11 @@ public class PostController {
     @PostMapping(value = "/post/{postNo}/image", consumes = "multipart/form-data")
     public ResponseEntity<Void> uploadImage(
             @PathVariable Long postNo,
-            @RequestPart(value = "image", required = true) MultipartFile imageFile
+            @RequestParam(value = "image", required = true) MultipartFile imageFile
     ) throws IOException {
         if (imageFile != null && !imageFile.isEmpty()) {
             // 파일 저장 로직 실행
-            String fileUrl = s3Uploader.upload(imageFile, "HealthHola-Post-Image", postNo.toString()); // 예시 함수, 파일을 저장하고 파일 이름을 반환
+            String fileUrl = s3Uploader.upload(imageFile, "HealthHola-Post-Image/"+postNo.toString());
             postService.uploadImage(postNo, fileUrl);
 
         }

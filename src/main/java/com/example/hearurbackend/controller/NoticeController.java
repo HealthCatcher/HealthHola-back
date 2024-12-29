@@ -111,15 +111,30 @@ public class NoticeController {
         return ResponseEntity.ok(participants);
     }
 
-    @Operation(summary = "체험단 이미지 업로드")
-    @PostMapping(value="/notice/{noticeId}/image", consumes = "multipart/form-data")
-    public ResponseEntity<Void> uploadImage(
+    @Operation(summary = "체험단 대표 이미지 업로드")
+    @PostMapping(value="/notice/{noticeId}/title-image", consumes = "multipart/form-data")
+    public ResponseEntity<Void> uploadTitleImage(
             @PathVariable UUID noticeId,
             @RequestParam("image") MultipartFile imageFile
     ) throws IOException {
         if (imageFile != null && !imageFile.isEmpty()) {
             // 파일 저장 로직 실행
-            String fileUrl = s3Uploader.upload(imageFile, "HealthHola-Notice-Image", noticeId.toString()); // 예시 함수, 파일을 저장하고 파일 이름을 반환
+            String folderPath = "HealthHola-Notice-Image/" + noticeId.toString() + "/title";
+            String fileUrl = s3Uploader.upload(imageFile, folderPath);
+            noticeService.uploadImage(noticeId, fileUrl);
+        }
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "체험단 상세 이미지 업로드")
+    @PostMapping(value="/notice/{noticeId}/detail-image", consumes = "multipart/form-data")
+    public ResponseEntity<Void> uploadDetailImage(
+            @PathVariable UUID noticeId,
+            @RequestParam("image") MultipartFile imageFile
+    ) throws IOException {
+        if (imageFile != null && !imageFile.isEmpty()) {
+            // 파일 저장 로직 실행
+            String fileUrl = s3Uploader.upload(imageFile, "HealthHola-Notice-Image/"+noticeId.toString()+"/details"); // 예시 함수, 파일을 저장하고 파일 이름을 반환
             noticeService.uploadImage(noticeId, fileUrl);
         }
         return ResponseEntity.noContent().build();

@@ -1,8 +1,7 @@
 package com.example.hearurbackend.service;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.*;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +14,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @Slf4j
@@ -29,11 +27,30 @@ public class S3Uploader {
         this.bucket = bucket;
     }
 
-    public String upload(MultipartFile multipartFile, String dirName, String id) throws IOException {
+    public String upload(MultipartFile multipartFile, String dirName) throws IOException {
         File file = convert(multipartFile)
                 .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File 변환 실패"));
+        int fileNumber = 1;
 
-        return upload(file, dirName, id);
+        // 적절한 파일 번호 찾기
+        while (checkFileExists(dirName, fileNumber)) {
+            fileNumber++;
+        }
+
+        String fileName = dirName + "/" + fileNumber;  // 최종 파일 이름 구성
+        return upload(file, dirName, fileName);
+    }
+    private boolean checkFileExists(String dirName, int fileNumber) {
+        String fileName = dirName + "/" + fileNumber;
+        ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(bucket).withPrefix(fileName);
+        ListObjectsV2Result result = amazonS3.listObjectsV2(req);
+
+        for (S3ObjectSummary objectSummary : result.getObjectSummaries()) {
+            if (objectSummary.getKey().equals(fileName)) {
+                return true;  // 파일이 존재함
+            }
+        }
+        return false;  // 파일이 존재하지 않음
     }
 
     private Optional<File> convert(MultipartFile file) throws IOException {
@@ -48,8 +65,7 @@ public class S3Uploader {
         return Optional.empty();
     }
 
-    public String upload(File file, String dirName, String id) {
-        String fileName = dirName + "/" + id;
+    public String upload(File file, String dirName, String fileName) {
         String uploadImageUrl = putS3(file, fileName);
         removeNewFile(file);
         return uploadImageUrl;
