@@ -68,10 +68,16 @@ public class SurveyService {
                 .map(question -> {
                     boolean isAnswered = question.getUserResponses().stream()
                             .anyMatch(response -> response.getUser().getUsername().equals(auth.getUsername()));
+                    int selectedUserAnswerIndex = question.getUserResponses().stream()
+                            .filter(response -> response.getUser().getUsername().equals(auth.getUsername()))
+                            .map(UserResponse::getSelectedOption)
+                            .map(AnswerOption::getIndex)
+                            .findFirst()
+                            .orElse(-1);
                     int totalParticipants = question.getUserResponses().size();
                     Map<AnswerOption, Long> optionCounts = question.getUserResponses().stream()
                             .collect(Collectors.groupingBy(UserResponse::getSelectedOption, Collectors.counting()));
-                    return new QuestionResponseDto(question, optionCounts, totalParticipants, isAnswered);
+                    return new QuestionResponseDto(question, optionCounts, totalParticipants, isAnswered, selectedUserAnswerIndex);
                 })
                 .toList();
     }
@@ -93,9 +99,15 @@ public class SurveyService {
         );
         boolean isAnswered = question.getUserResponses().stream()
                 .anyMatch(response -> response.getUser().getUsername().equals(auth.getUsername()));
+        int selectedUserAnswerIndex = question.getUserResponses().stream()
+                .filter(response -> response.getUser().getUsername().equals(auth.getUsername()))
+                .map(UserResponse::getSelectedOption)
+                .map(AnswerOption::getIndex)
+                .findFirst()
+                .orElse(-1);
         int totalParticipants = question.getUserResponses().size();
         Map<AnswerOption, Long> optionCounts = question.getUserResponses().stream()
                 .collect(Collectors.groupingBy(UserResponse::getSelectedOption, Collectors.counting()));
-        return new QuestionResponseDto(question, optionCounts, totalParticipants, isAnswered);
+        return new QuestionResponseDto(question, optionCounts, totalParticipants, isAnswered, selectedUserAnswerIndex);
     }
 }
