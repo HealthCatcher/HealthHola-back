@@ -36,7 +36,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String role = auth.getAuthority();
         String token = jwtUtil.createJwt(username, role, 60 * 60 * 1000 * 10L);
 
-        String redirectUrl = "myapp://login?token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
+        String redirectUrl = "healthhola://login?token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
         response.sendRedirect(redirectUrl);
     }
 
