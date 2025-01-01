@@ -1,6 +1,7 @@
 package com.example.hearurbackend.service;
 
 import com.example.hearurbackend.domain.ReportStatus;
+import com.example.hearurbackend.dto.report.ReportProcessRequestDto;
 import com.example.hearurbackend.dto.report.ReportRequestDto;
 import com.example.hearurbackend.dto.report.ReportResponseDto;
 import com.example.hearurbackend.entity.Report;
@@ -99,7 +100,7 @@ public class ReportService {
                 .toList();
     }
 
-    public void processReport(String username, Long id, ReportStatus status) {
+    public void processReport(String username, Long id, ReportProcessRequestDto reportProcessRequestDto) {
         Report report = reportRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Report not found with id: " + id));
         User admin = userService.getUser(username).orElseThrow(
@@ -108,7 +109,7 @@ public class ReportService {
         if(!admin.getRole().checkAdmin()) {
             throw new SecurityException("You are not an admin.");
         }
-        report.setStatus(status);
+        report.processReport(reportProcessRequestDto);
         reportRepository.save(report);
     }
 }

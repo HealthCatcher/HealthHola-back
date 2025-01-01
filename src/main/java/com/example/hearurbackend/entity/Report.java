@@ -3,6 +3,7 @@ package com.example.hearurbackend.entity;
 import com.example.hearurbackend.domain.DocsType;
 import com.example.hearurbackend.domain.ReportStatus;
 import com.example.hearurbackend.domain.ReportType;
+import com.example.hearurbackend.dto.report.ReportProcessRequestDto;
 import com.example.hearurbackend.entity.community.Comment;
 import com.example.hearurbackend.entity.community.Post;
 import com.example.hearurbackend.entity.experience.Notice;
@@ -29,6 +30,8 @@ public class Report {
 
     private LocalDateTime reportDate; // 신고 날짜
 
+    private String answer; // 신고 처리 내용
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post; // 관련 게시글
@@ -49,7 +52,6 @@ public class Report {
     @JoinColumn(name = "reporter_id")
     private User reporter; // 신고자
 
-    @Setter
     @Enumerated(EnumType.STRING)
     private ReportStatus status; // 신고 처리 상태 (예: PENDING, RESOLVED, DISMISSED)
 
@@ -68,6 +70,11 @@ public class Report {
         this.review = review;
         this.reporter = reporter;
         this.status = status;
+    }
+
+    public void processReport(ReportProcessRequestDto reportProcessRequestDto) {
+        this.answer = reportProcessRequestDto.getAnswer();
+        this.status = ReportStatus.valueOf(reportProcessRequestDto.getStatus());
     }
 }
 
