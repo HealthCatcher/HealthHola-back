@@ -21,10 +21,12 @@ import java.util.Optional;
 public class S3Uploader {
     private final AmazonS3 amazonS3;
     private final String bucket;
+    private final String bucketPath;
 
-    public S3Uploader(AmazonS3 amazonS3, @Value("${cloud.aws.s3.bucket}") String bucket) {
+    public S3Uploader(AmazonS3 amazonS3, @Value("${cloud.aws.s3.bucket}") String bucket, @Value("${s3.bucket.path}") String bucketPath) {
         this.amazonS3 = amazonS3;
         this.bucket = bucket;
+        this.bucketPath= bucketPath;
     }
 
     public String upload(MultipartFile multipartFile, String dirName) throws IOException {
@@ -37,7 +39,7 @@ public class S3Uploader {
             fileNumber++;
         }
 
-        String fileName = dirName + "/" + fileNumber;  // 최종 파일 이름 구성
+        String fileName = bucketPath + dirName + "/" + fileNumber;  // 최종 파일 이름 구성
         return upload(file, dirName, fileName);
     }
     private boolean checkFileExists(String dirName, int fileNumber) {
