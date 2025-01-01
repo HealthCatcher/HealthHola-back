@@ -96,4 +96,12 @@ public class AuthController {
         boolean isVerify = authService.verifyEmailCode(emailDto.getMail(), emailDto.getVerifyCode());
         return isVerify ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
     }
+
+    @Operation(summary = "이메일 중복 확인")
+    @GetMapping("/email")
+    public ResponseEntity<?> checkEmail(@RequestParam String email) {
+        boolean isDuplicated = authService.checkEmail(email);
+        return isDuplicated ? ResponseEntity.badRequest().build() : ResponseEntity.ok().build();
+    }
+
 }

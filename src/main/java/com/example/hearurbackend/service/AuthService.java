@@ -210,4 +210,8 @@ public class AuthService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         return passwordEncoder.matches(password, user.getPassword());
     }
+
+    public boolean checkEmail(String email) {
+        return userRepository.existsById(email);
+    }
 }
