@@ -1,5 +1,6 @@
 package com.example.hearurbackend.service;
 
+import com.example.hearurbackend.dto.comment.CommentRequestDto;
 import com.example.hearurbackend.dto.comment.CommentResponseDto;
 import com.example.hearurbackend.entity.community.Comment;
 import com.example.hearurbackend.entity.community.Post;
@@ -22,22 +23,29 @@ public class CommentService {
     private final PostRepository postRepository;
 
     @Transactional
-    public Comment createComment(Long postNo, String username, CommentResponseDto commentDTO) {
-        Post post = postRepository.findById(postNo).orElseThrow(
-                () -> new EntityNotFoundException("Post not found"));
+    public Comment createComment(Long postNo, String username, CommentRequestDto commentDTO) {
+        Post post = postRepository.findById(postNo)
+                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
+
+        Comment parentComment = null;  // 부모 댓글 기본값은 없음
+        if (commentDTO.getParentCommentId() != null) {
+            parentComment = commentRepository.findById(commentDTO.getParentCommentId())
+                    .orElseThrow(() -> new EntityNotFoundException("Parent comment not found"));
+        }
 
         Comment newComment = Comment.builder()
                 .content(commentDTO.getContent())
                 .author(username)
                 .createDate(LocalDateTime.now())
                 .post(post)
+                .parentComment(parentComment)
                 .build();
 
         return commentRepository.save(newComment);
     }
 
     @Transactional
-    public void updateComment(String username, UUID commentId, CommentResponseDto commentDTO) {
+    public void updateComment(String username, UUID commentId, CommentRequestDto commentDTO) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new EntityNotFoundException("Comment not found"));
 

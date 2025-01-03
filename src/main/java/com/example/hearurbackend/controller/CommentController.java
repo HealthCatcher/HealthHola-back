@@ -1,5 +1,6 @@
 package com.example.hearurbackend.controller;
 
+import com.example.hearurbackend.dto.comment.CommentRequestDto;
 import com.example.hearurbackend.dto.comment.CommentResponseDto;
 import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
 import com.example.hearurbackend.entity.community.Comment;
@@ -25,7 +26,7 @@ public class CommentController {
     @PostMapping("/post/{postNo}/comment")
     public ResponseEntity<Void> createComment(
             @PathVariable Long postNo,
-            @RequestBody @Valid CommentResponseDto commentDTO,
+            @RequestBody @Valid CommentRequestDto commentDTO,
             @AuthenticationPrincipal CustomOAuth2User auth
     ) {
         Comment newComment = commentService.createComment(postNo, auth.getUsername(), commentDTO);
@@ -42,7 +43,7 @@ public class CommentController {
     @PutMapping("/comment/{commentId}")
     public ResponseEntity<Void> updateComment(
             @PathVariable UUID commentId,
-            @RequestBody @Valid CommentResponseDto commentDTO,
+            @RequestBody @Valid CommentRequestDto commentDTO,
             @AuthenticationPrincipal CustomOAuth2User auth
     ) {
         commentService.updateComment(auth.getUsername(), commentId, commentDTO);

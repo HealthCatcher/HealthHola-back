@@ -34,8 +34,16 @@ public class Comment {
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Report> reports = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")  // 부모 댓글을 참조하는 필드
+    private Comment parentComment;
+
+    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> replies = new ArrayList<>();  // 자식 댓글을 저장하는 리스트
+
     @Builder
-    public Comment(String content, String author, LocalDateTime createDate, Post post) {
+    public Comment(Comment parentComment, String content, String author, LocalDateTime createDate, Post post) {
+        this.parentComment = parentComment;
         this.content = content;
         this.author = author;
         this.createDate = createDate;

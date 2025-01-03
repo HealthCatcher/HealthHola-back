@@ -4,6 +4,7 @@ import com.example.hearurbackend.dto.comment.CommentResponseDto;
 import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
 import com.example.hearurbackend.dto.post.PostRequestDto;
 import com.example.hearurbackend.dto.post.PostResponseDto;
+import com.example.hearurbackend.entity.community.Comment;
 import com.example.hearurbackend.entity.community.Like;
 import com.example.hearurbackend.entity.community.Post;
 import com.example.hearurbackend.entity.user.User;
@@ -17,8 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -32,39 +32,7 @@ public class PostService {
     public List<PostResponseDto> getPostList(CustomOAuth2User auth) {
         List<Post> postEntities = postRepository.findAll();
         return postEntities.stream()
-                .map(post -> {
-                    Optional<User> userOptional = userService.getUser(post.getAuthor());
-                    String authorNickname = userOptional.map(User::getNickname).orElse("Unknown Author");
-                    if(auth==null){
-                        return PostResponseDto.builder()
-                                .no(post.getNo())
-                                .category(post.getCategory())
-                                .title(post.getTitle())
-                                .author(authorNickname)
-                                .createDate(post.getCreateDate())
-                                .views(post.getViews())
-                                .likes(post.getLikesCount())
-                                .content(post.getContent())
-                                .commentsCount(post.getCommentsCount())
-                                .imageUrls(post.getImageUrl())
-                                .build();
-                    }
-                    User user = userService.getUser(auth.getUsername()).orElse(null);
-                    boolean isLiked = user != null && likeRepository.existsByUserAndPost(user, post);
-                    return PostResponseDto.builder()
-                            .no(post.getNo())
-                            .category(post.getCategory())
-                            .title(post.getTitle())
-                            .author(authorNickname)
-                            .createDate(post.getCreateDate())
-                            .views(post.getViews())
-                            .likes(post.getLikesCount())
-                            .content(post.getContent())
-                            .commentsCount(post.getCommentsCount())
-                            .isLiked(isLiked)
-                            .imageUrls(post.getImageUrl())
-                            .build();
-                })
+                .map(post -> createPostResponseDto(post, auth))
                 .collect(Collectors.toList());
     }
 
@@ -72,54 +40,75 @@ public class PostService {
         Post post = postRepository.findById(postNo).orElseThrow(() -> new EntityNotFoundException("Post not found with id: " + postNo));
         post.increaseViews();
         postRepository.save(post);
-        List<CommentResponseDto> commentDTOList = post.getComments().stream()
-                .map(comment -> {
-                    Optional<User> userOptional = userService.getUser(comment.getAuthor());
-                    String authorNickname = userOptional.map(User::getNickname).orElse("Unknown Author");
-                    return new CommentResponseDto(
-                            comment.getId(),
-                            authorNickname,
-                            comment.getContent(),
-                            comment.getCreateDate(),
-                            comment.isUpdated());
-                })
-                .toList();
+        return createPostResponseDto(post, auth);
+    }
 
-        Optional<User> userOptional = userService.getUser(post.getAuthor());
-        String authorNickname = userOptional.map(User::getNickname).orElse("Unknown Author");
-        if(auth==null){
-            return PostResponseDto.builder()
-                    .no(post.getNo())
-                    .category(post.getCategory())
-                    .title(post.getTitle())
-                    .content(post.getContent())
-                    .author(authorNickname)
-                    .createDate(post.getCreateDate())
-                    .updateDate(post.getUpdateDate())
-                    .isUpdated(post.isUpdated())
-                    .comments(commentDTOList)
-                    .views(post.getViews())
-                    .likes(post.getLikesCount())
-                    .imageUrls(post.getImageUrl())
-                    .build();
-        }
-        User user = userService.getUser(auth.getUsername()).orElse(null);
-        boolean isLiked = user != null && likeRepository.existsByUserAndPost(user, post);
+    private PostResponseDto createPostResponseDto(Post post, CustomOAuth2User auth) {
+        String authorNickname = getAuthorNickname(post.getAuthor());
+        boolean isLiked = checkPostLikedByUser(post, auth);
+        List<CommentResponseDto> commentDTOList = createCommentDtoList(post.getComments());
+
         return PostResponseDto.builder()
                 .no(post.getNo())
                 .category(post.getCategory())
                 .title(post.getTitle())
-                .content(post.getContent())
                 .author(authorNickname)
                 .createDate(post.getCreateDate())
                 .updateDate(post.getUpdateDate())
                 .isUpdated(post.isUpdated())
+                .content(post.getContent())
                 .comments(commentDTOList)
                 .views(post.getViews())
                 .likes(post.getLikesCount())
                 .isLiked(isLiked)
                 .imageUrls(post.getImageUrl())
                 .build();
+    }
+
+    private String getAuthorNickname(String authorId) {
+        return userService.getUser(authorId)
+                .map(User::getNickname)
+                .orElse("Unknown Author");
+    }
+
+    private boolean checkPostLikedByUser(Post post, CustomOAuth2User auth) {
+        if (auth == null) return false;
+        return userService.getUser(auth.getUsername())
+                .map(user -> likeRepository.existsByUserAndPost(user, post))
+                .orElse(false);
+    }
+
+    private List<CommentResponseDto> createCommentDtoList(List<Comment> comments) {
+        Map<UUID, CommentResponseDto> commentMap = new HashMap<>();
+        List<CommentResponseDto> result = new ArrayList<>();
+
+        // 먼저 모든 댓글을 DTO로 변환하고 맵에 저장
+        for (Comment comment : comments) {
+            CommentResponseDto dto = new CommentResponseDto(
+                    comment.getId(),
+                    comment.getParentComment() != null ? comment.getParentComment().getId() : null,
+                    getAuthorNickname(comment.getAuthor()),
+                    comment.getContent(),
+                    comment.getCreateDate(),
+                    comment.isUpdated(),
+                    new ArrayList<>()
+            );
+            commentMap.put(comment.getId(), dto);
+            if (comment.getParentComment() == null) {
+                result.add(dto);
+            }
+        }
+
+        // 자식 댓글을 부모 DTO에 추가
+        for (Comment comment : comments) {
+            if (comment.getParentComment() != null) {
+                CommentResponseDto childDto = commentMap.get(comment.getId());
+                CommentResponseDto parentDto = commentMap.get(comment.getParentComment().getId());
+                parentDto.getReplies().add(childDto);
+            }
+        }
+
+        return result;
     }
 
     @Transactional
