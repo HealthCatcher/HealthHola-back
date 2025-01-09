@@ -70,7 +70,7 @@ public class AuthController {
             @RequestBody UserDto userDTO,
             @AuthenticationPrincipal CustomOAuth2User user
     ) {
-        boolean isCorrect = authService.verifyPassword(userDTO.getPassword(), user.getUsername());
+        boolean isCorrect = authService.verifyPassword(user.getUsername(), userDTO.getPassword());
         return isCorrect ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
     }
 
