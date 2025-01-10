@@ -59,4 +59,8 @@ public class CustomUserDetails implements UserDetails {
     public int getUserPoint() {
         return user.getPoint();
     }
+
+    public String getEmail() {
+        return user.getEmail();
+    }
 }
