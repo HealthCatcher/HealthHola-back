@@ -80,6 +80,8 @@ public class User {
     private LocalDateTime lastLoginAt;
     private LocalDateTime lastPasswordChangedAt;
     private LocalDateTime accountSuspensionDate;
+    private String address;
+    private Boolean isRegistered;
 
     public User(String username, String password, String name, String email, UserRole role, String nickname) {
         this.username = username;
@@ -103,6 +105,14 @@ public class User {
         this.point = 0;
         this.createdAt = LocalDateTime.now();
         this.accountExpiredAt = LocalDateTime.now().plusYears(3);
+        this.isRegistered = false;
+    }
+
+    public void updateOAuthUser(String email, String name, String nickname) {
+        this.email = email;
+        this.name = name;
+        this.nickname = nickname;
+        this.isRegistered = true;
     }
 
     public void updateOAuthUser(String email, String name) {
@@ -150,5 +160,9 @@ public class User {
     public void removeFavoriteNotice(Notice notice) {
         this.favoriteNotices.remove(notice);
         notice.getFavoriteUsers().remove(this);  // Notice 쪽의 리스트에서 User를 제거
+    }
+
+    public boolean isRegistered() {
+        return this.isRegistered;
     }
 }

@@ -2,6 +2,7 @@ package com.example.hearurbackend.service;
 
 import com.example.hearurbackend.domain.UserRole;
 import com.example.hearurbackend.dto.auth.AuthRequest;
+import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
 import com.example.hearurbackend.dto.user.UserDto;
 import com.example.hearurbackend.entity.user.User;
 import com.example.hearurbackend.jwt.JWTUtil;
@@ -213,5 +214,11 @@ public class AuthService {
 
     public boolean checkEmail(String email) {
         return userRepository.existsById(email);
+    }
+
+    public User registerOAuthUser(UserDto userDTO, CustomOAuth2User customOAuth2User) {
+        User user = userRepository.findById(customOAuth2User.getUsername()).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        user.updateOAuthUser(userDTO.getEmail(), userDTO.getName(), userDTO.getNickname());
+        return userRepository.save(user);
     }
 }

@@ -104,4 +104,14 @@ public class AuthController {
         return isDuplicated ? ResponseEntity.badRequest().build() : ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "OAuth2 계정 등록")
+    @PostMapping("/oauth")
+    public ResponseEntity<?> registerOAuthUser(
+            @RequestBody UserDto userDTO,
+            @AuthenticationPrincipal CustomOAuth2User user
+    ) {
+        User newUser = authService.registerOAuthUser(userDTO, user);
+        return ResponseEntity.created(URI.create("/users/" + newUser.getUsername())).build();
+    }
+
 }
