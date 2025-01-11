@@ -14,6 +14,7 @@ public class ReportResponseDto {
     private DocsType docsType;
     private String status;
     private String type;
+    private String answer;
 
     public ReportResponseDto(Report report) {
         this.id = report.getId();
@@ -23,5 +24,6 @@ public class ReportResponseDto {
         this.status = report.getStatus().toString();
         this.type = report.getType().toString();
         this.docsType = report.getDocsType();
+        this.answer = report.getAnswer();
     }
 }

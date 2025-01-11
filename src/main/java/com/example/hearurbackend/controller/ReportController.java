@@ -1,6 +1,5 @@
 package com.example.hearurbackend.controller;
 
-import com.example.hearurbackend.domain.ReportStatus;
 import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
 import com.example.hearurbackend.dto.report.ReportProcessRequestDto;
 import com.example.hearurbackend.dto.report.ReportRequestDto;
@@ -13,7 +12,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
