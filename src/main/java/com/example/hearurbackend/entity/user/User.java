@@ -93,6 +93,7 @@ public class User {
         this.point = 0;
         this.createdAt = LocalDateTime.now();
         this.accountExpiredAt = LocalDateTime.now().plusYears(3);
+        this.isRegistered = true;
     }
 
 
