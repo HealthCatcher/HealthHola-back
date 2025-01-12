@@ -117,4 +117,12 @@ public class PostController {
         }
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "첫번째 Post인지 확인")
+    @GetMapping("/post/first")
+    public ResponseEntity<Boolean> isFirstPost(
+            @AuthenticationPrincipal CustomOAuth2User auth
+    ) {
+        return ResponseEntity.ok(postService.isFirstPost(auth.getUsername()));
+    }
 }

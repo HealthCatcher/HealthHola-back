@@ -179,4 +179,8 @@ public class PostService {
         post.addImageUrl(fileUrl);
         postRepository.save(post);
     }
+
+    public Boolean isFirstPost(String username) {
+        return postRepository.existsByAuthor(username);
+    }
 }
