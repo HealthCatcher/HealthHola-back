@@ -43,4 +43,14 @@ public class UserController {
     ) {
         return ResponseEntity.ok(userService.getAppliedNoticeList(auth.getUsername()));
     }
+
+    @Operation(summary = "주소지 설정")
+    @PutMapping("/address")
+    public ResponseEntity<Void> changeAddress(
+            @AuthenticationPrincipal CustomOAuth2User auth,
+            @RequestBody UserDto userDTO
+    ) {
+        userService.changeAddress(auth.getUsername(), userDTO.getAddress());
+        return ResponseEntity.noContent().build();
+    }
 }

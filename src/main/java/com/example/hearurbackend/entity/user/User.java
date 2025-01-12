@@ -166,4 +166,8 @@ public class User {
     public boolean isRegistered() {
         return this.isRegistered;
     }
+
+    public void changeAddress(String address) {
+        this.address = address;
+    }
 }

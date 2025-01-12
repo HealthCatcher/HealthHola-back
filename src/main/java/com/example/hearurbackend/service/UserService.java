@@ -85,4 +85,11 @@ public class UserService {
                 })
                 .collect(Collectors.toList()).reversed();
     }
+
+    @Transactional
+    public void changeAddress(String username, String address) {
+        User user = userRepository.findById(username).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        user.changeAddress(address);
+        userRepository.save(user);
+    }
 }
