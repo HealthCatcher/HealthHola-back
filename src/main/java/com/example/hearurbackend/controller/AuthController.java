@@ -2,6 +2,7 @@ package com.example.hearurbackend.controller;
 
 import com.example.hearurbackend.dto.auth.AuthRequest;
 import com.example.hearurbackend.dto.auth.EmailDto;
+import com.example.hearurbackend.dto.auth.RegisterOauthDto;
 import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
 import com.example.hearurbackend.dto.user.UserDto;
 import com.example.hearurbackend.entity.user.User;
@@ -107,11 +108,11 @@ public class AuthController {
     @Operation(summary = "OAuth2 계정 등록")
     @PostMapping("/oauth")
     public ResponseEntity<?> registerOAuthUser(
-            @RequestBody UserDto userDTO,
+            @RequestBody RegisterOauthDto registerOauthDto,
             @AuthenticationPrincipal CustomOAuth2User user
     ) {
-        User newUser = authService.registerOAuthUser(userDTO, user);
-        return ResponseEntity.created(URI.create("/users/" + newUser.getUsername())).build();
+        User newUser = authService.registerOAuthUser(registerOauthDto, user);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "OAuth2 계정 등록 여부 조회")

@@ -111,8 +111,7 @@ public class User {
         this.isRegistered = false;
     }
 
-    public void updateOAuthUser(String email, String name, String nickname) {
-        this.email = email;
+    public void registerOAuthUser(String name, String nickname) {
         this.name = name;
         this.nickname = nickname;
         this.isRegistered = true;
@@ -121,6 +120,7 @@ public class User {
     public void updateOAuthUser(String email, String name) {
         this.email = email;
         this.name = name;
+        this.isRegistered = true;
     }
 
     public void changePassword(String password) {
