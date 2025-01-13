@@ -1,5 +1,5 @@
 package com.example.hearurbackend.domain;
 
 public enum DocsType {
-    POST, REVIEW, COMMENT, NOTICE
+    POST, REVIEW, COMMENT, NOTICE, ASK
 }

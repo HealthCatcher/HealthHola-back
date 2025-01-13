@@ -55,4 +55,12 @@ public class ReportController {
         reportService.processReport(auth.getUsername(), id, reportProcessRequestDto);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary="내 신고 목록 조회")
+    @GetMapping("/report/my")
+    public ResponseEntity<List<ReportResponseDto>> getMyReport(
+            @AuthenticationPrincipal CustomOAuth2User auth
+    ) {
+        return ResponseEntity.ok(reportService.getMyReportList(auth.getUsername()));
+    }
 }

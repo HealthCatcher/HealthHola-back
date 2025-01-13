@@ -14,6 +14,7 @@ import com.example.hearurbackend.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -61,6 +62,8 @@ public class ReportService {
                 reportBuilder.review(review);
                 break;
 
+            case ASK:
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported docsType: " + reportRequestDto.getDocsType());
         }
@@ -111,5 +114,15 @@ public class ReportService {
         }
         report.processReport(reportProcessRequestDto);
         reportRepository.save(report);
+    }
+
+    @Transactional
+    public List<ReportResponseDto> getMyReportList(String username) {
+        User reporter = userService.getUser(username).orElseThrow(
+                () -> new IllegalArgumentException("User not found with username: " + username)
+        );
+        return reportRepository.findAllByReporterUsername(username).stream()
+                .map(ReportResponseDto::new)
+                .toList();
     }
 }
