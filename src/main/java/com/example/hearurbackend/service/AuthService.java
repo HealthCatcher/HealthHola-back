@@ -233,6 +233,6 @@ public class AuthService {
 
     public AccountDto getUserInfo(CustomOAuth2User user) {
         User foundUser = userRepository.findById(user.getUsername()).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        return new AccountDto(foundUser.getUsername(), foundUser.getNickname(),foundUser.getRole(), foundUser.getPoint());
+        return new AccountDto(foundUser.getEmail(), foundUser.getNickname(),foundUser.getRole(), foundUser.getPoint());
     }
 }
