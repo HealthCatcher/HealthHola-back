@@ -71,7 +71,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String userPoint = String.valueOf(customUserDetails.getUserPoint());
         String nickname = customUserDetails.getNickname();
         String email = customUserDetails.getEmail();
-        Boolean isRegistered = customUserDetails.isRegistered();
 
         response.addHeader("Authorization", "Bearer " + token);
 
@@ -82,7 +81,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         responseBody.put("nickname", nickname);
         responseBody.put("role", role);
         responseBody.put("point", userPoint);
-        responseBody.put("isRegistered", isRegistered);
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");

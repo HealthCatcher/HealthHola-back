@@ -114,4 +114,10 @@ public class AuthController {
         return ResponseEntity.created(URI.create("/users/" + newUser.getUsername())).build();
     }
 
+    @Operation(summary = "OAuth2 계정 등록 여부 조회")
+    @GetMapping("/oauth")
+    public ResponseEntity<?> checkOAuthUser(@AuthenticationPrincipal CustomOAuth2User user) {
+        boolean isRegistered = authService.checkOAuthUser(user);
+        return isRegistered ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
+    }
 }

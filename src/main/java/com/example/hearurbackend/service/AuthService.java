@@ -221,4 +221,9 @@ public class AuthService {
         user.updateOAuthUser(userDTO.getEmail(), userDTO.getName(), userDTO.getNickname());
         return userRepository.save(user);
     }
+
+    public boolean checkOAuthUser(CustomOAuth2User customOAuth2User) {
+        User user = userRepository.findById(customOAuth2User.getUsername()).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        return user.isRegistered();
+    }
 }
