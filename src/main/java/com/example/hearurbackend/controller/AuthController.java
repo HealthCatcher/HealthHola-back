@@ -33,6 +33,11 @@ public class AuthController {
 
     private final AuthService authService;
 
+    @Operation(summary = "oauth2 계정 정보 가져오기")
+    @GetMapping("/info")
+    public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal CustomOAuth2User user) {
+        return ResponseEntity.ok(authService.getUserInfo(user));
+    }
 
     @Operation(summary = "안드로이드 앱 소셜 로그인 처리")
     @PostMapping("/login")

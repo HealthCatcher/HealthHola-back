@@ -1,6 +1,7 @@
 package com.example.hearurbackend.service;
 
 import com.example.hearurbackend.domain.UserRole;
+import com.example.hearurbackend.dto.auth.AccountDto;
 import com.example.hearurbackend.dto.auth.AuthRequest;
 import com.example.hearurbackend.dto.auth.PasswordDto;
 import com.example.hearurbackend.dto.auth.RegisterOauthDto;
@@ -228,5 +229,10 @@ public class AuthService {
     public boolean checkOAuthUser(CustomOAuth2User customOAuth2User) {
         User user = userRepository.findById(customOAuth2User.getUsername()).orElseThrow(() -> new IllegalArgumentException("User not found"));
         return user.isRegistered();
+    }
+
+    public AccountDto getUserInfo(CustomOAuth2User user) {
+        User foundUser = userRepository.findById(user.getUsername()).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        return new AccountDto(foundUser.getUsername(), foundUser.getNickname(),foundUser.getRole(), foundUser.getPoint());
     }
 }
