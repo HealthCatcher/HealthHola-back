@@ -1,7 +1,9 @@
 package com.example.hearurbackend.dto.auth;
 
 import com.example.hearurbackend.domain.UserRole;
+import lombok.Getter;
 
+@Getter
 public class AccountDto {
     private String username;
     private String nickname;

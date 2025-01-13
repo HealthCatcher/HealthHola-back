@@ -1,9 +1,6 @@
 package com.example.hearurbackend.controller;
 
-import com.example.hearurbackend.dto.auth.AuthRequest;
-import com.example.hearurbackend.dto.auth.EmailDto;
-import com.example.hearurbackend.dto.auth.PasswordDto;
-import com.example.hearurbackend.dto.auth.RegisterOauthDto;
+import com.example.hearurbackend.dto.auth.*;
 import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
 import com.example.hearurbackend.dto.user.RegisterUserDto;
 import com.example.hearurbackend.dto.user.UserDto;
@@ -26,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 
 @Slf4j
-@Controller
+@RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
@@ -35,7 +32,7 @@ public class AuthController {
 
     @Operation(summary = "oauth2 계정 정보 가져오기")
     @GetMapping("/info")
-    public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal CustomOAuth2User user) {
+    public ResponseEntity<AccountDto> getUserInfo(@AuthenticationPrincipal CustomOAuth2User user) {
         return ResponseEntity.ok(authService.getUserInfo(user));
     }
 
