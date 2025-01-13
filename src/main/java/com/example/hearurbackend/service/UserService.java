@@ -93,9 +93,19 @@ public class UserService {
 
     @Transactional
     public void changeAddress(String username, AddressDto addressRequestDto) {
-        User user = userRepository.findById(username).orElseThrow(() -> new EntityNotFoundException("User not found"));
-        Address addressEntity = new Address(user, addressRequestDto);
-        addressRepository.save(addressEntity);
+        // 사용자 조회
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        // 사용자의 현재 주소를 가져옴
+        Address address = user.getAddress();
+
+        if (address == null) {
+            address = new Address(user, addressRequestDto);
+        } else {
+            address.update(addressRequestDto);
+        }
+        addressRepository.save(address);
     }
 
     public AddressDto getAddress(String username) {

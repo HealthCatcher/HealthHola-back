@@ -33,4 +33,10 @@ public class Address {
         this.detailAddress = addressRequestDto.getDetailAddress();
         this.zoneCode = addressRequestDto.getZoneCode();
     }
+
+    public void update(AddressDto addressRequestDto) {
+        this.address = addressRequestDto.getAddress();
+        this.detailAddress = addressRequestDto.getDetailAddress();
+        this.zoneCode = addressRequestDto.getZoneCode();
+    }
 }
