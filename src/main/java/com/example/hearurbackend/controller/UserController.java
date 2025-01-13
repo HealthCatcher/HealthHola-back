@@ -2,6 +2,7 @@ package com.example.hearurbackend.controller;
 
 import com.example.hearurbackend.dto.experience.NoticeResponseDto;
 import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
+import com.example.hearurbackend.dto.user.AddressDto;
 import com.example.hearurbackend.dto.user.UserDto;
 import com.example.hearurbackend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -48,9 +49,17 @@ public class UserController {
     @PutMapping("/address")
     public ResponseEntity<Void> changeAddress(
             @AuthenticationPrincipal CustomOAuth2User auth,
-            @RequestBody UserDto userDTO
+            @RequestBody AddressDto addressDto
     ) {
-        userService.changeAddress(auth.getUsername(), userDTO.getAddress());
+        userService.changeAddress(auth.getUsername(), addressDto);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "주소 조회")
+    @GetMapping("/address")
+    public ResponseEntity<AddressDto> getAddress(
+            @AuthenticationPrincipal CustomOAuth2User auth
+    ) {
+        return ResponseEntity.ok(userService.getAddress(auth.getUsername()));
     }
 }

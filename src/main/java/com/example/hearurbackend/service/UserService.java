@@ -1,8 +1,12 @@
 package com.example.hearurbackend.service;
 
 import com.example.hearurbackend.dto.experience.NoticeResponseDto;
+import com.example.hearurbackend.dto.user.AddressDto;
+import com.example.hearurbackend.dto.user.UserDto;
 import com.example.hearurbackend.entity.experience.Notice;
+import com.example.hearurbackend.entity.user.Address;
 import com.example.hearurbackend.entity.user.User;
+import com.example.hearurbackend.repository.AddressRepository;
 import com.example.hearurbackend.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final AddressRepository addressRepository;
 
     public Optional<User> getUser(String username) {
         return userRepository.findById(username);
@@ -87,9 +92,18 @@ public class UserService {
     }
 
     @Transactional
-    public void changeAddress(String username, String address) {
+    public void changeAddress(String username, AddressDto addressRequestDto) {
         User user = userRepository.findById(username).orElseThrow(() -> new EntityNotFoundException("User not found"));
-        user.changeAddress(address);
-        userRepository.save(user);
+        Address addressEntity = new Address(user, addressRequestDto);
+        addressRepository.save(addressEntity);
+    }
+
+    public AddressDto getAddress(String username) {
+        User user = userRepository.findById(username).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        Address address = user.getAddress();
+        if (address == null) {
+            return null;
+        }
+        return new AddressDto(address.getAddress(), address.getDetailAddress(), address.getZoneCode());
     }
 }

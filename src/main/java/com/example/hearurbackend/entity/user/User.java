@@ -80,7 +80,9 @@ public class User {
     private LocalDateTime lastLoginAt;
     private LocalDateTime lastPasswordChangedAt;
     private LocalDateTime accountSuspensionDate;
-    private String address;
+
+    @OneToOne(mappedBy = "user")
+    private Address address;
     private Boolean isRegistered;
 
     public User(String username, String password, String name, String email, UserRole role, String nickname) {
@@ -167,7 +169,7 @@ public class User {
         return this.isRegistered;
     }
 
-    public void changeAddress(String address) {
+    public void changeAddress(Address address) {
         this.address = address;
     }
 }
