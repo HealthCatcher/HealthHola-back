@@ -2,8 +2,10 @@ package com.example.hearurbackend.controller;
 
 import com.example.hearurbackend.dto.auth.AuthRequest;
 import com.example.hearurbackend.dto.auth.EmailDto;
+import com.example.hearurbackend.dto.auth.PasswordDto;
 import com.example.hearurbackend.dto.auth.RegisterOauthDto;
 import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
+import com.example.hearurbackend.dto.user.RegisterUserDto;
 import com.example.hearurbackend.dto.user.UserDto;
 import com.example.hearurbackend.entity.user.User;
 import com.example.hearurbackend.service.AuthService;
@@ -54,33 +56,33 @@ public class AuthController {
     @Operation(summary = "회원가입")
     @PostMapping("/signup")
     public ResponseEntity<?> register(
-            @RequestBody UserDto userDTO
+            @RequestBody RegisterUserDto registerUserDto
     ) {
         //실제 서비스하면 주석 해제
 //            if(!authService.isVerified(userDTO.getUsername())) {
 //                return ResponseEntity.badRequest().body("이메일 인증을 해주세요.");
 //            }
-        User newUser = authService.registerUser(userDTO);
+        User newUser = authService.registerUser(registerUserDto);
         return ResponseEntity.created(URI.create("/users/" + newUser.getUsername())).build();
 
     }
 
-    @Operation(summary = "비밀번호 검증")
+    @Operation(summary = "비밀번호 확인")
     @PostMapping("/password/verify")
     public ResponseEntity<?> verifyPassword(
-            @RequestBody UserDto userDTO,
+            @RequestBody PasswordDto passwordDto,
             @AuthenticationPrincipal CustomOAuth2User user
     ) {
-        boolean isCorrect = authService.verifyPassword(user.getUsername(), userDTO.getPassword());
+        boolean isCorrect = authService.verifyPassword(user.getUsername(), passwordDto.getPassword());
         return isCorrect ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
     }
 
     @Operation(summary = "비밀번호 변경")
     @PostMapping("/password")
     public ResponseEntity<?> changePassword(
-            @RequestBody UserDto userDTO
+            @RequestBody PasswordDto passwordDto
     ) {
-        authService.changePassword(userDTO);
+        authService.changePassword(passwordDto);
         return ResponseEntity.noContent().build();
     }
 

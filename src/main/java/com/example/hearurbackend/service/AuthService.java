@@ -2,8 +2,10 @@ package com.example.hearurbackend.service;
 
 import com.example.hearurbackend.domain.UserRole;
 import com.example.hearurbackend.dto.auth.AuthRequest;
+import com.example.hearurbackend.dto.auth.PasswordDto;
 import com.example.hearurbackend.dto.auth.RegisterOauthDto;
 import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
+import com.example.hearurbackend.dto.user.RegisterUserDto;
 import com.example.hearurbackend.dto.user.UserDto;
 import com.example.hearurbackend.entity.user.User;
 import com.example.hearurbackend.jwt.JWTUtil;
@@ -127,27 +129,27 @@ public class AuthService {
     }
 
     @Transactional
-    public User registerUser(UserDto userDTO) {
+    public User registerUser(RegisterUserDto registerUserDto) {
 
-        if (userRepository.existsById(userDTO.getUsername())) {
+        if (userRepository.existsById(registerUserDto.getUsername())) {
             throw new IllegalArgumentException("Given user already exists");
         }
         User user = new User(
-                userDTO.getUsername(),
-                passwordEncoder.encode(userDTO.getPassword()),
-                userDTO.getName(),
-                userDTO.getEmail(),
+                registerUserDto.getUsername(),
+                passwordEncoder.encode(registerUserDto.getPassword()),
+                registerUserDto.getName(),
+                registerUserDto.getEmail(),
                 UserRole.ROLE_USER,
-                userDTO.getNickname()
+                registerUserDto.getNickname()
         );
         return userRepository.save(user);
     }
 
     @Transactional
-    public void changePassword(UserDto userDTO) {
-        User user = userRepository.findById(userDTO.getUsername())
+    public void changePassword(PasswordDto passwordDto) {
+        User user = userRepository.findById(passwordDto.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        user.changePassword(passwordEncoder.encode(userDTO.getPassword()));
+        user.changePassword(passwordEncoder.encode(passwordDto.getPassword()));
         userRepository.save(user);
     }
 

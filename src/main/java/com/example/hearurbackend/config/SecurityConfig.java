@@ -124,6 +124,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/email/send").permitAll()
                         .requestMatchers("/api/v1/auth/email/verify").permitAll()
                         .requestMatchers("api/v1/auth/email").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/password").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/community/post").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/community/post/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/community/post/*/comment").permitAll()
