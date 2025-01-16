@@ -60,7 +60,7 @@ public class SecurityConfig {
                     CorsConfiguration configuration = new CorsConfiguration();
 
                     // Origin을 올바르게 설정
-                    configuration.setAllowedOrigins(Arrays.asList("http://localhost:8081", "http://localhost:3000"));
+                    configuration.setAllowedOrigins(Arrays.asList("http://localhost:8081", "http://localhost:3000", "https://api.healthcatcher.net"));
 
                     // HTTP 메서드를 올바르게 설정
                     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
