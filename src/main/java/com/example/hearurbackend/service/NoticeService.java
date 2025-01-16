@@ -179,13 +179,13 @@ public class NoticeService {
         ParticipantEntry participantEntry = participantEntryRepository.findByNoticeAndUser(notice, user)
                 .orElse(new ParticipantEntry(notice, user));
 
-//        try {
-//            if (!isEligibleForNewEntry(participantEntry, user)) {
-//                throw new IllegalStateException("You have already applied for this notice today.");
-//            }
-//        } catch (IllegalStateException e) {
-//            throw new IllegalStateException(e.getMessage() + " " + getTimeUntilNextEntry(participantEntry, user));
-//        }
+        try {
+            if (!isEligibleForNewEntry(participantEntry, user)) {
+                throw new IllegalStateException("You have already applied for this notice today.");
+            }
+        } catch (IllegalStateException e) {
+            throw new IllegalStateException(e.getMessage() + " " + getTimeUntilNextEntry(participantEntry, user));
+        }
 
         participantEntry.increaseEntryCount();
         participantEntryRepository.save(participantEntry);
