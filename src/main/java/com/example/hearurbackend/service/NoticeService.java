@@ -52,6 +52,8 @@ public class NoticeService {
                                 .maxParticipants(notice.getMaxParticipants())
                                 .participants(notice.getParticipantEntries().size())
                                 .favoriteCount(notice.getFavoritesCount())
+                                .titleImageUrls(notice.getTitleImageUrl())
+                                .detailImageUrls(notice.getDetailImageUrls())
                                 .build();
                     }
                     User user = userService.getUser(auth.getUsername()).orElse(null);
