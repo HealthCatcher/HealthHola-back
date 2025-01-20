@@ -125,4 +125,11 @@ public class AuthController {
         boolean isRegistered = authService.checkOAuthUser(user);
         return isRegistered ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
     }
+
+    @Operation(summary = "회원 탈퇴")
+    @DeleteMapping("/withdraw")
+    public ResponseEntity<?> withdraw(@AuthenticationPrincipal CustomOAuth2User user) {
+        authService.withdraw(user);
+        return ResponseEntity.noContent().build();
+    }
 }

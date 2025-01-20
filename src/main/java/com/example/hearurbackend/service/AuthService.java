@@ -235,4 +235,9 @@ public class AuthService {
         User foundUser = userRepository.findById(user.getUsername()).orElseThrow(() -> new IllegalArgumentException("User not found"));
         return new AccountDto(foundUser.getEmail(), foundUser.getNickname(),foundUser.getRole(), foundUser.getPoint());
     }
+
+    public void withdraw(CustomOAuth2User user) {
+        User foundUser = userRepository.findById(user.getUsername()).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        userRepository.delete(foundUser);
+    }
 }
