@@ -32,13 +32,14 @@ public class NoticeService {
     private final UserService userService;
     private final ParticipantEntryRepository participantEntryRepository;
     private final UserRepository userRepository;
+
     public List<NoticeResponseDto> getNoticeList(CustomOAuth2User auth) {
         List<Notice> noticeEntities = experienceNoticeRepository.findAll();
         return noticeEntities.stream()
                 .map(notice -> {
                     Optional<User> userOptional = userService.getUser(notice.getAuthor().getUsername());
                     String authorNickname = userOptional.map(User::getNickname).orElse("Unknown Author");
-                    if(auth==null){
+                    if (auth == null) {
                         return NoticeResponseDto.builder()
                                 .id(notice.getId())
                                 .category(notice.getCategory())
@@ -92,7 +93,7 @@ public class NoticeService {
                         review.getUrls()
                 ))
                 .toList();
-        if(auth==null){
+        if (auth == null) {
             return NoticeResponseDto.builder()
                     .id(notice.getId())
                     .category(notice.getCategory())
@@ -178,113 +179,112 @@ public class NoticeService {
         User user = userService.getUser(username)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
 
-        ParticipantEntry participantEntry = participantEntryRepository.findByNoticeAndUser(notice, user)
-                .orElse(new ParticipantEntry(notice, user));
-
-        try {
+        Optional<ParticipantEntry> existingParticipantEntry = participantEntryRepository.findByNoticeAndUser(notice, user);
+        ParticipantEntry participantEntry;
+        if (existingParticipantEntry.isEmpty()) {
+            participantEntry = new ParticipantEntry(notice, user);
+        } else {
+            participantEntry = existingParticipantEntry.get();
             if (!isEligibleForNewEntry(participantEntry, user)) {
-                throw new IllegalStateException("You have already applied for this notice today.");
+                String message = "You have already applied for this notice today. " + getTimeUntilNextEntry(participantEntry, user);
+                throw new IllegalStateException(message);
             }
-        } catch (IllegalStateException e) {
-            throw new IllegalStateException(e.getMessage() + " " + getTimeUntilNextEntry(participantEntry, user));
         }
-
         participantEntry.increaseEntryCount();
         participantEntryRepository.save(participantEntry);
+}
+
+private boolean isEligibleForNewEntry(ParticipantEntry participantEntry, User user) {
+    LocalDateTime lastEntryTime = participantEntry.getLastEntryDate();
+    LocalDateTime now = LocalDateTime.now();
+    // 먼저 날짜가 변경되었는지 확인
+    if (!lastEntryTime.toLocalDate().equals(now.toLocalDate())) {
+        return true;
     }
-
-    private boolean isEligibleForNewEntry(ParticipantEntry participantEntry, User user) {
-        LocalDateTime lastEntryTime = participantEntry.getLastEntryDate();
-        LocalDateTime now = LocalDateTime.now();
-        // 먼저 날짜가 변경되었는지 확인
-        if (!lastEntryTime.toLocalDate().equals(now.toLocalDate())) {
-            return true;
-        }
-        // 같은 날이라면, 프리미엄 사용자의 경우에는 1시간 간격 확인
-        if (user.getRole() == UserRole.ROLE_PREMIUM) {
-            return Duration.between(lastEntryTime, now).toHours() >= 1;
-        }
-        // 일반 사용자는 같은 날 다시 응모할 수 없음
-        return false;
+    // 같은 날이라면, 프리미엄 사용자의 경우에는 1시간 간격 확인
+    if (user.getRole() == UserRole.ROLE_PREMIUM) {
+        return Duration.between(lastEntryTime, now).toHours() >= 1;
     }
+    // 일반 사용자는 같은 날 다시 응모할 수 없음
+    return false;
+}
 
-    private String getTimeUntilNextEntry(ParticipantEntry participantEntry, User user) {
-        LocalDateTime lastEntryTime = participantEntry.getLastEntryDate();
+private String getTimeUntilNextEntry(ParticipantEntry participantEntry, User user) {
+    LocalDateTime lastEntryTime = participantEntry.getLastEntryDate();
 
-        // 다음날 자정
-        LocalDateTime nextDayMidnight = lastEntryTime.toLocalDate().atStartOfDay().plusDays(1);
-        LocalDateTime nextAvailableTime;
+    // 다음날 자정
+    LocalDateTime nextDayMidnight = lastEntryTime.toLocalDate().atStartOfDay().plusDays(1);
+    LocalDateTime nextAvailableTime;
 
-        if (user.getRole() == UserRole.ROLE_PREMIUM) {
-            LocalDateTime oneHourAfterLastEntry = lastEntryTime.plusHours(1);
-            nextAvailableTime = oneHourAfterLastEntry.isBefore(nextDayMidnight) ? oneHourAfterLastEntry : nextDayMidnight;
-        } else {
-            nextAvailableTime = nextDayMidnight;
-        }
-        return formatNextAvailableTime(nextAvailableTime);
+    if (user.getRole() == UserRole.ROLE_PREMIUM) {
+        LocalDateTime oneHourAfterLastEntry = lastEntryTime.plusHours(1);
+        nextAvailableTime = oneHourAfterLastEntry.isBefore(nextDayMidnight) ? oneHourAfterLastEntry : nextDayMidnight;
+    } else {
+        nextAvailableTime = nextDayMidnight;
     }
+    return formatNextAvailableTime(nextAvailableTime);
+}
 
-    private String formatNextAvailableTime(LocalDateTime dateTime) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        return dateTime.format(formatter);
+private String formatNextAvailableTime(LocalDateTime dateTime) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+    return dateTime.format(formatter);
+}
+
+
+public void cancelApplyNotice(UUID noticeId, String username) {
+    Notice notice = experienceNoticeRepository.findById(noticeId).orElseThrow(
+            () -> new EntityNotFoundException("Post not found with id: " + noticeId));
+    User user = userService.getUser(username).orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
+    ParticipantEntry participantEntry = participantEntryRepository.findByNoticeAndUser(notice, user).orElseThrow(() -> new EntityNotFoundException("Participant entry not found"));
+    participantEntryRepository.delete(participantEntry);
+}
+
+public List<String> getParticipants(UUID noticeId) {
+    Notice notice = experienceNoticeRepository.findById(noticeId).orElseThrow(
+            () -> new EntityNotFoundException("Post not found with id: " + noticeId));
+    return notice.getParticipantEntries().stream()
+            .map(participantEntry -> participantEntry.getUser().getUsername())
+            .collect(Collectors.toList());
+}
+
+public Notice getNotice(UUID noticeId) {
+    return experienceNoticeRepository.findById(noticeId).orElseThrow(
+            () -> new EntityNotFoundException("Post not found with id: " + noticeId));
+}
+
+public void uploadImage(UUID noticeId, String fileUrl, int index) {
+    Notice notice = experienceNoticeRepository.findById(noticeId).orElseThrow(
+            () -> new EntityNotFoundException("Notice not found with id: " + noticeId));
+    switch (index) {
+        case 0:
+            notice.addTitleImageUrl(fileUrl);
+            break;
+        case 1:
+            notice.addDetailImageUrl(fileUrl);
+            break;
+        default:
+            throw new IllegalArgumentException("Invalid index: " + index);
     }
+    experienceNoticeRepository.save(notice);
+}
 
+public void favoriteNotice(UUID noticeId, String username) {
+    Notice notice = experienceNoticeRepository.findById(noticeId).orElseThrow(
+            () -> new EntityNotFoundException("Post not found with id: " + noticeId));
+    User user = userService.getUser(username).orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
 
+    user.addFavoriteNotice(notice); // User 객체의 메소드를 사용하여 Notice를 추가함으로써 양방향 동기화 처리
+    experienceNoticeRepository.save(notice);
+    userRepository.save(user); // 변경사항을 User에도 반영
+}
 
-    public void cancelApplyNotice(UUID noticeId, String username) {
-        Notice notice = experienceNoticeRepository.findById(noticeId).orElseThrow(
-                () -> new EntityNotFoundException("Post not found with id: " + noticeId));
-        User user = userService.getUser(username).orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
-        ParticipantEntry participantEntry = participantEntryRepository.findByNoticeAndUser(notice, user).orElseThrow(() -> new EntityNotFoundException("Participant entry not found"));
-        participantEntryRepository.delete(participantEntry);
-    }
+public void cancelFavoriteNotice(UUID noticeId, String username) {
+    Notice notice = experienceNoticeRepository.findById(noticeId).orElseThrow(
+            () -> new EntityNotFoundException("Post not found with id: " + noticeId));
+    User user = userService.getUser(username).orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
 
-    public List<String> getParticipants(UUID noticeId) {
-        Notice notice = experienceNoticeRepository.findById(noticeId).orElseThrow(
-                () -> new EntityNotFoundException("Post not found with id: " + noticeId));
-        return notice.getParticipantEntries().stream()
-                .map(participantEntry -> participantEntry.getUser().getUsername())
-                .collect(Collectors.toList());
-    }
-
-    public Notice getNotice(UUID noticeId) {
-        return experienceNoticeRepository.findById(noticeId).orElseThrow(
-                () -> new EntityNotFoundException("Post not found with id: " + noticeId));
-    }
-
-    public void uploadImage(UUID noticeId, String fileUrl, int index) {
-        Notice notice = experienceNoticeRepository.findById(noticeId).orElseThrow(
-                () -> new EntityNotFoundException("Notice not found with id: " + noticeId));
-        switch (index) {
-            case 0:
-                notice.addTitleImageUrl(fileUrl);
-                break;
-            case 1:
-                notice.addDetailImageUrl(fileUrl);
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid index: " + index);
-        }
-        experienceNoticeRepository.save(notice);
-    }
-
-    public void favoriteNotice(UUID noticeId, String username) {
-        Notice notice = experienceNoticeRepository.findById(noticeId).orElseThrow(
-                () -> new EntityNotFoundException("Post not found with id: " + noticeId));
-        User user = userService.getUser(username).orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
-
-        user.addFavoriteNotice(notice); // User 객체의 메소드를 사용하여 Notice를 추가함으로써 양방향 동기화 처리
-        experienceNoticeRepository.save(notice);
-        userRepository.save(user); // 변경사항을 User에도 반영
-    }
-
-    public void cancelFavoriteNotice(UUID noticeId, String username) {
-        Notice notice = experienceNoticeRepository.findById(noticeId).orElseThrow(
-                () -> new EntityNotFoundException("Post not found with id: " + noticeId));
-        User user = userService.getUser(username).orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
-
-        user.removeFavoriteNotice(notice); // User 객체의 메소드를 사용하여 Notice를 제거함으로써 양방향 동기화 처리
-        experienceNoticeRepository.save(notice);
-        userRepository.save(user); // 변경사항을 User에도 반영
-    }
+    user.removeFavoriteNotice(notice); // User 객체의 메소드를 사용하여 Notice를 제거함으로써 양방향 동기화 처리
+    experienceNoticeRepository.save(notice);
+    userRepository.save(user); // 변경사항을 User에도 반영
+}
 }
