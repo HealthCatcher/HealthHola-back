@@ -1,11 +1,15 @@
 package com.example.hearurbackend.security;
 
 import com.example.hearurbackend.dto.auth.LoginDto;
+import com.example.hearurbackend.entity.RefreshEntity;
 import com.example.hearurbackend.jwt.JWTUtil;
+import com.example.hearurbackend.repository.RefreshRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,21 +20,20 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.util.MimeTypeUtils;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
+    private final RefreshRepository refreshRepository;
 
-    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil) {
+    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil, RefreshRepository refreshRepository) {
 
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
+        this.refreshRepository = refreshRepository;
     }
 
     @Override
@@ -58,7 +61,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
-
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         String username = customUserDetails.getUsername();
 
@@ -67,12 +69,18 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         GrantedAuthority auth = iterator.next();
 
         String role = auth.getAuthority();
-        String token = jwtUtil.createJwt(username, role, 60 * 60 * 1000 * 10L);
+        String access = jwtUtil.createJwt("access", username, role, 60 * 60 * 1000 * 10L);
+        String refresh = jwtUtil.createJwt("refresh", username, role, 60 * 60 * 1000 * 24L * 30L);
+
+        addRefreshEntity(username, refresh, 86400000L);
+        
         String userPoint = String.valueOf(customUserDetails.getUserPoint());
         String nickname = customUserDetails.getNickname();
         String email = customUserDetails.getEmail();
 
-        response.addHeader("Authorization", "Bearer " + token);
+        response.setHeader("access", access);
+        response.addCookie(createCookie("refresh", refresh));
+        response.setStatus(HttpStatus.OK.value());
 
         Map<String, Object> responseBody = new HashMap<>();
 
@@ -88,8 +96,25 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         objectMapper.writeValue(response.getWriter(), responseBody);
     }
 
+    private void addRefreshEntity(String username, String refresh, Long expiredMs) {
+        Date date = new Date(System.currentTimeMillis() + expiredMs);
+
+        RefreshEntity refreshEntity = new RefreshEntity(username, refresh, date.toString());
+        refreshRepository.save(refreshEntity);
+    }
+
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
         response.setStatus(401);
+    }
+
+    private Cookie createCookie(String key, String value) {
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(24 * 60 * 60);
+        //cookie.setSecure(true);
+        //cookie.setPath("/");
+        cookie.setHttpOnly(true);
+
+        return cookie;
     }
 }

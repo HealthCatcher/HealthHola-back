@@ -1,9 +1,11 @@
 package com.example.hearurbackend.config;
 
+import com.example.hearurbackend.jwt.CustomLogoutFilter;
 import com.example.hearurbackend.jwt.JWTFilter;
 import com.example.hearurbackend.jwt.JWTUtil;
 import com.example.hearurbackend.oauth2.CustomClientRegistrationRepo;
 import com.example.hearurbackend.oauth2.CustomSuccessHandler;
+import com.example.hearurbackend.repository.RefreshRepository;
 import com.example.hearurbackend.security.LoginFilter;
 import com.example.hearurbackend.service.CustomOAuth2UserService;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +20,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.Arrays;
@@ -31,19 +34,22 @@ public class SecurityConfig {
     private final CustomSuccessHandler customSuccessHandler;
     private final CustomClientRegistrationRepo customClientRegistrationRepo;
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final RefreshRepository refreshRepository;
     private final JWTUtil jwtUtil;
 
     public SecurityConfig(CustomOAuth2UserService customOAuth2UserService,
                           CustomSuccessHandler customSuccessHandler,
                           CustomClientRegistrationRepo customClientRegistrationRepo,
                           JWTUtil jwtUtil,
-                          AuthenticationConfiguration authenticationConfiguration
+                          AuthenticationConfiguration authenticationConfiguration,
+                            RefreshRepository refreshRepository
     ) {
         this.customOAuth2UserService = customOAuth2UserService;
         this.customSuccessHandler = customSuccessHandler;
         this.customClientRegistrationRepo = customClientRegistrationRepo;
         this.jwtUtil = jwtUtil;
         this.authenticationConfiguration = authenticationConfiguration;
+        this.refreshRepository = refreshRepository;
     }
 
     @Bean
@@ -123,7 +129,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/jwt").permitAll()
                         .requestMatchers("/api/v1/auth/email/send").permitAll()
                         .requestMatchers("/api/v1/auth/email/verify").permitAll()
-                        .requestMatchers("api/v1/auth/email").permitAll()
+                        .requestMatchers("/api/v1/auth/email").permitAll()
+                        .requestMatchers("/reissue").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/password").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/community/post").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/community/post/*").permitAll()
@@ -140,7 +147,9 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshRepository), UsernamePasswordAuthenticationFilter.class);
+        http
+                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter.class);
         return http.build();
     }
 

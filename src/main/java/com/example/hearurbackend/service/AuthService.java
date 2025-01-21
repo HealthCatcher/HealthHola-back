@@ -8,13 +8,16 @@ import com.example.hearurbackend.dto.auth.RegisterOauthDto;
 import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
 import com.example.hearurbackend.dto.user.RegisterUserDto;
 import com.example.hearurbackend.dto.user.UserDto;
+import com.example.hearurbackend.entity.RefreshEntity;
 import com.example.hearurbackend.entity.user.User;
 import com.example.hearurbackend.jwt.JWTUtil;
+import com.example.hearurbackend.repository.RefreshRepository;
 import com.example.hearurbackend.repository.UserRepository;
 import com.example.hearurbackend.util.RedisUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.Cookie;
@@ -22,10 +25,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -34,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 import java.util.Random;
 
@@ -47,13 +48,14 @@ public class AuthService {
     private final RedisUtil redisUtil;
     private final BCryptPasswordEncoder passwordEncoder;
     private final RestTemplate restTemplate;
+    private final RefreshRepository refreshRepository;
     private static final String senderEmail = "master@healthcatcher.net";
 
 
     public String generateJwtToken(String username) {
         // JWT 토큰 생성 및 반환
         String role = UserRole.ROLE_USER.toString();
-        return jwtUtil.createJwt(username, role, 60 * 60 * 1000 * 10L);
+        return jwtUtil.createJwt("access", username, role, 60 * 60 * 1000 * 10L);
     }
 
     public User saveUser(String username, String email, String name, UserRole role) {
@@ -188,7 +190,8 @@ public class AuthService {
             ResponseEntity<String> response = restTemplate.exchange(userInfoUri, HttpMethod.GET, entity, String.class);
             ObjectMapper objectMapper = new ObjectMapper();
 
-            Map<String, Object> jsonMap = objectMapper.readValue(response.getBody(), new TypeReference<>() {});
+            Map<String, Object> jsonMap = objectMapper.readValue(response.getBody(), new TypeReference<>() {
+            });
             String resultCode = (String) jsonMap.get("resultcode");
 
             if (resultCode == null || !resultCode.equals("00"))
@@ -233,11 +236,53 @@ public class AuthService {
 
     public AccountDto getUserInfo(CustomOAuth2User user) {
         User foundUser = userRepository.findById(user.getUsername()).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        return new AccountDto(foundUser.getEmail(), foundUser.getNickname(),foundUser.getRole(), foundUser.getPoint());
+        return new AccountDto(foundUser.getEmail(), foundUser.getNickname(), foundUser.getRole(), foundUser.getPoint());
     }
 
     public void withdraw(CustomOAuth2User user) {
         User foundUser = userRepository.findById(user.getUsername()).orElseThrow(() -> new IllegalArgumentException("User not found"));
         userRepository.delete(foundUser);
+    }
+
+    public String[] reissue(String refreshToken) throws Exception {
+        // 토큰 만료 여부 확인
+        if (jwtUtil.isExpired(refreshToken)) {
+            throw new ExpiredJwtException(null, null, "refresh token expired");
+        }
+
+        // 토큰 카테고리 확인
+        String category = jwtUtil.getCategory(refreshToken);
+        if (!category.equals("refresh")) {
+            throw new IllegalArgumentException("invalid refresh token");
+        }
+        String username = jwtUtil.getUsername(refreshToken);
+        String role = jwtUtil.getRole(refreshToken);
+
+        // 새로운 JWT 생성
+        String newAccess = jwtUtil.createJwt("access", username, role, 60 * 60 * 1000 * 10L);
+        String newRefresh = jwtUtil.createJwt("refresh", username, role, 60 * 60 * 1000 * 24L * 30L);
+
+        refreshRepository.deleteByRefresh(refreshToken);
+        addRefreshEntity(username, newRefresh, 86400000L);
+
+        return new String[]{newAccess, newRefresh};
+    }
+
+    private void addRefreshEntity(String username, String newRefresh, Long expiredMs) {
+        Date date = new Date(System.currentTimeMillis() + expiredMs);
+
+        RefreshEntity refreshEntity = new RefreshEntity(username, newRefresh, date.toString());
+
+        refreshRepository.save(refreshEntity);
+    }
+
+    public Cookie createCookie(String key, String value) {
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(24 * 60 * 60);
+        //cookie.setSecure(true);
+        //cookie.setPath("/");
+        cookie.setHttpOnly(true);
+
+        return cookie;
     }
 }
