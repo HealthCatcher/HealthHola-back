@@ -1,6 +1,8 @@
 package com.example.hearurbackend.service;
 
+import com.example.hearurbackend.domain.DocsType;
 import com.example.hearurbackend.domain.ReportStatus;
+import com.example.hearurbackend.domain.UserRole;
 import com.example.hearurbackend.dto.report.ReportProcessRequestDto;
 import com.example.hearurbackend.dto.report.ReportRequestDto;
 import com.example.hearurbackend.dto.report.ReportResponseDto;
@@ -82,13 +84,15 @@ public class ReportService {
     public ReportResponseDto getReportDetail(String username, Long id) {
         Report report = reportRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Report not found with id: " + id));
-        User reporter = userService.getUser(username).orElseThrow(
+        User user = userService.getUser(username).orElseThrow(
                 () -> new IllegalArgumentException("User not found with username: " + username)
         );
-        if(!reporter.getRole().checkAdmin()) {
+        if(user.getRole().equals(UserRole.ROLE_ADMIN) || report.getReporter().getUsername().equals(username)) {
+            return new ReportResponseDto(report);
+        }
+        else{
             throw new SecurityException("You are not an admin.");
         }
-        return new ReportResponseDto(report);
     }
 
     public List<ReportResponseDto> getReportList(String username){
@@ -122,6 +126,16 @@ public class ReportService {
                 () -> new IllegalArgumentException("User not found with username: " + username)
         );
         return reportRepository.findAllByReporterUsername(username).stream()
+                .map(ReportResponseDto::new)
+                .toList();
+    }
+
+    @Transactional
+    public List<ReportResponseDto> getMyReportListAsk(String username) {
+        User reporter = userService.getUser(username).orElseThrow(
+                () -> new IllegalArgumentException("User not found with username: " + username)
+        );
+        return reportRepository.findAllByReporterUsernameAndDocsType(username, DocsType.ASK).stream()
                 .map(ReportResponseDto::new)
                 .toList();
     }

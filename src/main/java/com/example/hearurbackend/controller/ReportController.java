@@ -63,4 +63,12 @@ public class ReportController {
     ) {
         return ResponseEntity.ok(reportService.getMyReportList(auth.getUsername()));
     }
+
+    @Operation(summary="내 신고 목록(ask) 조회")
+    @GetMapping("/report/my/ask")
+    public ResponseEntity<List<ReportResponseDto>> getMyReportAsk(
+            @AuthenticationPrincipal CustomOAuth2User auth
+    ) {
+        return ResponseEntity.ok(reportService.getMyReportListAsk(auth.getUsername()));
+    }
 }
