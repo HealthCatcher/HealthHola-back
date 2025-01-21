@@ -33,4 +33,5 @@ public class NoticeResponseDto {
     private final boolean isFavorite;
     private final List<String> titleImageUrls;
     private final List<String> detailImageUrls;
+    private final String nextApplyTime;
 }

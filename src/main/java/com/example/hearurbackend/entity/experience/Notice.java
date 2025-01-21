@@ -1,12 +1,12 @@
 package com.example.hearurbackend.entity.experience;
 
+import com.example.hearurbackend.dto.experience.NoticeRequestDto;
 import com.example.hearurbackend.entity.Report;
 import com.example.hearurbackend.entity.user.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -75,6 +75,18 @@ public class Notice {
         this.maxParticipants = maxParticipants;
     }
 
+    public Notice(NoticeRequestDto dto, User author, LocalDateTime createDate) {
+        this.title = dto.getTitle();
+        this.content = dto.getContent();
+        this.author = author;
+        this.createDate = createDate;
+        this.startDate = dto.getStartDate();
+        this.endDate = dto.getEndDate();
+        this.category = dto.getCategory();
+        this.campaignDetails = dto.getCampaignDetails();
+        this.instruction = dto.getInstruction();
+        this.maxParticipants = dto.getMaxParticipants();
+    }
 
     public void updateNotice(String newTitle, String newContent) {
         this.title = newTitle;
