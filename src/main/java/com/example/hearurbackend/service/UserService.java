@@ -56,6 +56,9 @@ public class UserService {
                             .maxParticipants(notice.getMaxParticipants())
                             .participants(notice.getParticipantEntries().size())
                             .favoriteCount(notice.getFavoritesCount())
+                            .isFavorite(true)
+                            .titleImageUrls(notice.getTitleImageUrl())
+                            .detailImageUrls(notice.getDetailImageUrls())
                             .build();
                 })
                 .collect(Collectors.toList()).reversed();
@@ -86,6 +89,9 @@ public class UserService {
                             .maxParticipants(myNotice.getMaxParticipants())
                             .participants(myNotice.getParticipantEntries().size())
                             .favoriteCount(myNotice.getFavoritesCount())
+                            .isFavorite(user.getFavoriteNotices().contains(myNotice))
+                            .titleImageUrls(myNotice.getTitleImageUrl())
+                            .detailImageUrls(myNotice.getDetailImageUrls())
                             .build();
                 })
                 .collect(Collectors.toList()).reversed();
