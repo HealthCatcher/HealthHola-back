@@ -79,7 +79,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String email = customUserDetails.getEmail();
 
         response.setHeader("Authorization", "bearer " + access);
-        response.addCookie(createCookie("refresh", refresh));
+        response.setHeader("refresh", "bearer " + refresh);
+
         response.setStatus(HttpStatus.OK.value());
 
         Map<String, Object> responseBody = new HashMap<>();
@@ -106,15 +107,5 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
         response.setStatus(401);
-    }
-
-    private Cookie createCookie(String key, String value) {
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24 * 60 * 60);
-        //cookie.setSecure(true);
-        //cookie.setPath("/");
-        cookie.setHttpOnly(true);
-
-        return cookie;
     }
 }

@@ -16,19 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 
-@RestController
+@RestController("/api/v1")
 @RequiredArgsConstructor
 public class ReissueController {
     private final AuthService authService;
     private final RefreshRepository refreshRepository;
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
-        Cookie[] cookies = request.getCookies();
-        String refresh = Arrays.stream(cookies)
-                .filter(cookie -> "refresh".equals(cookie.getName()))
-                .findFirst()
-                .map(Cookie::getValue)
-                .orElse(null);
+        String refresh = request.getHeader("refresh");
 
         if (refresh == null) {
             return new ResponseEntity<>("refresh token null", HttpStatus.BAD_REQUEST);
@@ -40,8 +35,8 @@ public class ReissueController {
 
         try {
             String[] tokens = authService.reissue(refresh);
-            response.setHeader("Authorization", "bearer " + tokens[0]);
-            response.addCookie(authService.createCookie("refresh", tokens[1]));
+            response.addHeader("Authorization", "bearer " + tokens[0]);
+            response.addHeader("refresh", "bearer " + tokens[1]);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (ExpiredJwtException e) {
             return new ResponseEntity<>("refresh token expired", HttpStatus.BAD_REQUEST);
