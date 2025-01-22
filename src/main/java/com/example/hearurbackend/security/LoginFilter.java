@@ -78,7 +78,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String nickname = customUserDetails.getNickname();
         String email = customUserDetails.getEmail();
 
-        response.setHeader("access", access);
+        response.setHeader("Authorization", "bearer " + access);
         response.addCookie(createCookie("refresh", refresh));
         response.setStatus(HttpStatus.OK.value());
 

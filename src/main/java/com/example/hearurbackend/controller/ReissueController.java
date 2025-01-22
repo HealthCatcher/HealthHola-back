@@ -40,7 +40,7 @@ public class ReissueController {
 
         try {
             String[] tokens = authService.reissue(refresh);
-            response.setHeader("access", tokens[0]);
+            response.setHeader("Authorization", "bearer " + tokens[0]);
             response.addCookie(authService.createCookie("refresh", tokens[1]));
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (ExpiredJwtException e) {

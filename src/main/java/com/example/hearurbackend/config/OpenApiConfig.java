@@ -15,10 +15,12 @@ public class OpenApiConfig {
         final String securitySchemeName = "JWT";
 
         SecurityScheme securityScheme = new SecurityScheme()
-                .name("access") // HTTP 헤더 이름 설정
-                .type(SecurityScheme.Type.APIKEY) // API 키 유형으로 변경
-                .in(SecurityScheme.In.HEADER) // 위치는 헤더
-                .description("JWT Token without Bearer");
+                .name("Authorization")
+                .type(SecurityScheme.Type.HTTP)
+                .scheme("bearer")
+                .in(SecurityScheme.In.HEADER)
+                .bearerFormat("JWT")
+                .description("JWT");
 
         Info info = new Info()
                 .title("HealthHola 백엔드 API")
