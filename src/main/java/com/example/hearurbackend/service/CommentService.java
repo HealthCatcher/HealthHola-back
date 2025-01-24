@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -71,14 +70,5 @@ public class CommentService {
     public Comment getComment(UUID commentId) {
         return commentRepository.findById(commentId).orElseThrow(
                 () -> new EntityNotFoundException("Comment not found with id: " + commentId));
-    }
-
-    public boolean checkCommentReported(List<Comment> comments) {
-        for (Comment comment : comments) {
-            if (!comment.getReports().isEmpty()) {
-                return true;
-            }
-        }
-        return false;
     }
 }

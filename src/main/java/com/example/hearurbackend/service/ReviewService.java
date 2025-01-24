@@ -76,5 +76,6 @@ public class ReviewService {
         return reviews.stream()
                 .map(ReviewResponseDto::new)
                 .collect(Collectors.toList());
+
     }
 }
