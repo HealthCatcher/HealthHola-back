@@ -31,6 +31,7 @@ public class PostService {
     private final LikeRepository likeRepository;
     private final CommentService commentService;
 
+    @Transactional
     public List<PostResponseDto> getPostList(CustomOAuth2User auth) {
         List<Post> postEntities = postRepository.findAll();
         return postEntities.stream()
@@ -38,6 +39,7 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public PostResponseDto getPostDetail(Long postNo, CustomOAuth2User auth) {
         Post post = postRepository.findById(postNo).orElseThrow(() -> new EntityNotFoundException("Post not found with id: " + postNo));
         post.increaseViews();
@@ -69,11 +71,13 @@ public class PostService {
                 .build();
     }
 
-    private boolean checkPostReported(Post post) {
+
+    @Transactional
+    public boolean checkPostReported(Post post) {
         return !post.getReports().isEmpty();
     }
 
-    private String getAuthorNickname(String authorId) {
+    public String getAuthorNickname(String authorId) {
         return userService.getUser(authorId)
                 .map(User::getNickname)
                 .orElse("Unknown Author");

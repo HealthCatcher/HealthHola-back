@@ -5,6 +5,7 @@ import com.example.hearurbackend.dto.review.ReviewResponseDto;
 import com.example.hearurbackend.entity.experience.Review;
 import com.example.hearurbackend.entity.user.User;
 import com.example.hearurbackend.repository.ReviewRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -71,6 +72,7 @@ public class ReviewService {
         reviewRepository.delete(review);
     }
 
+    @Transactional
     public List<ReviewResponseDto> getReviewList(UUID noticeId) {
         List<Review> reviews = reviewRepository.findAllByExperienceNoticeId(noticeId);
         return reviews.stream()

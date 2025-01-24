@@ -73,6 +73,7 @@ public class CommentService {
                 () -> new EntityNotFoundException("Comment not found with id: " + commentId));
     }
 
+    @Transactional
     public boolean checkCommentReported(List<Comment> comments) {
         for (Comment comment : comments) {
             if (!comment.getReports().isEmpty()) {

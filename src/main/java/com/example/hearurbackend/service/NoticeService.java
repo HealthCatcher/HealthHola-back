@@ -12,6 +12,7 @@ import com.example.hearurbackend.repository.ExperienceNoticeRepository;
 import com.example.hearurbackend.repository.ParticipantEntryRepository;
 import com.example.hearurbackend.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,11 +34,13 @@ public class NoticeService {
     private final ParticipantEntryRepository participantEntryRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public List<NoticeResponseDto> getNoticeList(CustomOAuth2User auth) {
         List<Notice> notices = experienceNoticeRepository.findAll();
         return notices.stream().map(notice -> convertToDto(notice, auth)).collect(Collectors.toList());
     }
 
+    @Transactional
     public NoticeResponseDto getNoticeDetail(UUID noticeId, CustomOAuth2User auth) {
         Notice notice = experienceNoticeRepository.findById(noticeId)
                 .orElseThrow(() -> new EntityNotFoundException("Notice not found with id: " + noticeId));
