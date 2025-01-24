@@ -39,6 +39,7 @@ dependencies {
 	implementation 'org.projectlombok:lombok'
 	implementation 'org.postgresql:postgresql:42.7.3'
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+	implementation 'org.jboss.logging:jboss-logging:3.4.2.Final'
 
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
