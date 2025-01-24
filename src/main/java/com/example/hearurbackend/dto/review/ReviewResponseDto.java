@@ -14,13 +14,15 @@ public class ReviewResponseDto {
     private String content;
     private LocalDateTime createDate;
     private List<String> urls;
+    private boolean isReported;
 
-    public ReviewResponseDto(UUID id, String author, String content, LocalDateTime createDate, List<String> urls) {
+    public ReviewResponseDto(UUID id, String author, String content, LocalDateTime createDate, List<String> urls, boolean isReported) {
         this.id = id;
         this.author = author;
         this.content = content;
         this.createDate = createDate;
         this.urls = urls;
+        this.isReported = isReported;
     }
 
     public ReviewResponseDto(Review review) {
@@ -29,5 +31,6 @@ public class ReviewResponseDto {
         this.content = review.getContent();
         this.createDate = review.getCreatedAt();
         this.urls = review.getUrls();
+        this.isReported = !review.getReports().isEmpty();
     }
 }
