@@ -10,6 +10,7 @@ import com.example.hearurbackend.entity.community.Post;
 import com.example.hearurbackend.entity.user.User;
 import com.example.hearurbackend.repository.LikeRepository;
 import com.example.hearurbackend.repository.PostRepository;
+import com.example.hearurbackend.repository.ReportRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 import jakarta.transaction.Transactional;
@@ -28,6 +29,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserService userService;
     private final LikeRepository likeRepository;
+    private final CommentService commentService;
 
     public List<PostResponseDto> getPostList(CustomOAuth2User auth) {
         List<Post> postEntities = postRepository.findAll();
@@ -47,6 +49,7 @@ public class PostService {
         String authorNickname = getAuthorNickname(post.getAuthor());
         boolean isLiked = checkPostLikedByUser(post, auth);
         List<CommentResponseDto> commentDTOList = createCommentDtoList(post.getComments());
+        boolean isReported = checkPostReported(post);
 
         return PostResponseDto.builder()
                 .no(post.getNo())
@@ -62,7 +65,12 @@ public class PostService {
                 .likes(post.getLikesCount())
                 .isLiked(isLiked)
                 .imageUrls(post.getImageUrl())
+                .isReported(isReported)
                 .build();
+    }
+
+    private boolean checkPostReported(Post post) {
+        return !post.getReports().isEmpty();
     }
 
     private String getAuthorNickname(String authorId) {
@@ -81,7 +89,7 @@ public class PostService {
     private List<CommentResponseDto> createCommentDtoList(List<Comment> comments) {
         Map<UUID, CommentResponseDto> commentMap = new HashMap<>();
         List<CommentResponseDto> result = new ArrayList<>();
-
+        boolean isReported = commentService.checkCommentReported(comments);
         // 먼저 모든 댓글을 DTO로 변환하고 맵에 저장
         for (Comment comment : comments) {
             CommentResponseDto dto = new CommentResponseDto(

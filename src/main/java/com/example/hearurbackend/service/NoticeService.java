@@ -50,7 +50,8 @@ public class NoticeService {
                         review.getUser().getNickname(),
                         review.getContent(),
                         review.getCreatedAt(),
-                        review.getUrls()
+                        review.getUrls(),
+                        review.getReports().isEmpty()
                 ))
                 .toList();
 
