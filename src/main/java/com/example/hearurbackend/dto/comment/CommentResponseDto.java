@@ -15,8 +15,9 @@ public class CommentResponseDto {
     private LocalDateTime createDate;
     private boolean isUpdated;
     private List<CommentResponseDto> replies;
+    private boolean isReported;
 
-    public CommentResponseDto(UUID id, UUID parentCommentId, String author, String content, LocalDateTime createDate, boolean isUpdated, List<CommentResponseDto> replies) {
+    public CommentResponseDto(UUID id, UUID parentCommentId, String author, String content, LocalDateTime createDate, boolean isUpdated, List<CommentResponseDto> replies, boolean isReported) {
         this.id = id;
         this.parentCommentId = parentCommentId;
         this.author = author;
@@ -24,5 +25,6 @@ public class CommentResponseDto {
         this.createDate = createDate;
         this.isUpdated = isUpdated;
         this.replies = replies;
+        this.isReported = isReported;
     }
 }

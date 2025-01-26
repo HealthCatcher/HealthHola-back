@@ -74,12 +74,7 @@ public class CommentService {
     }
 
     @Transactional
-    public boolean checkCommentReported(List<Comment> comments) {
-        for (Comment comment : comments) {
-            if (!comment.getReports().isEmpty()) {
-                return true;
-            }
-        }
-        return false;
+    public boolean checkCommentReported(Comment comments) {
+        return !comments.getReports().isEmpty();
     }
 }

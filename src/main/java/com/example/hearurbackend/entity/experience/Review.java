@@ -4,6 +4,7 @@ import com.example.hearurbackend.dto.review.ReviewRequestDto;
 import com.example.hearurbackend.entity.Report;
 import com.example.hearurbackend.entity.user.User;
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -46,5 +47,10 @@ public class Review {
     public void updateReview(String content, List<String> urls) {
         this.content = content;
         this.urls = urls;
+    }
+
+    @Transactional
+    public boolean checkReviewReported() {
+        return !this.reports.isEmpty();
     }
 }

@@ -48,13 +48,14 @@ public class NoticeService {
         experienceNoticeRepository.save(notice);
 
         List<ReviewResponseDto> reviewDTOList = notice.getReviews().stream()
-                .map(review -> new ReviewResponseDto(
+                .map(review ->
+                    new ReviewResponseDto(
                         review.getId(),
                         review.getUser().getNickname(),
                         review.getContent(),
                         review.getCreatedAt(),
                         review.getUrls(),
-                        review.getReports().isEmpty()
+                        review.checkReviewReported()
                 ))
                 .toList();
 

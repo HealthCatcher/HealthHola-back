@@ -93,7 +93,6 @@ public class PostService {
     private List<CommentResponseDto> createCommentDtoList(List<Comment> comments) {
         Map<UUID, CommentResponseDto> commentMap = new HashMap<>();
         List<CommentResponseDto> result = new ArrayList<>();
-        boolean isReported = commentService.checkCommentReported(comments);
         // 먼저 모든 댓글을 DTO로 변환하고 맵에 저장
         for (Comment comment : comments) {
             CommentResponseDto dto = new CommentResponseDto(
@@ -103,7 +102,8 @@ public class PostService {
                     comment.getContent(),
                     comment.getCreateDate(),
                     comment.isUpdated(),
-                    new ArrayList<>()
+                    new ArrayList<>(),
+                    commentService.checkCommentReported(comment)
             );
             commentMap.put(comment.getId(), dto);
             if (comment.getParentComment() == null) {

@@ -79,4 +79,9 @@ public class ReviewService {
                 .map(ReviewResponseDto::new)
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public boolean checkReviewReported(Review review) {
+        return !review.getReports().isEmpty();
+    }
 }
