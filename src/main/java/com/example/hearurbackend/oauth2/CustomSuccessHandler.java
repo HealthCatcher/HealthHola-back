@@ -1,6 +1,6 @@
 package com.example.hearurbackend.oauth2;
 
-import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
+import com.example.hearurbackend.domain.oauth.dto.CustomOAuth2User;
 import com.example.hearurbackend.jwt.JWTUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,20 +1,15 @@
 package com.example.hearurbackend.controller;
 
-import com.example.hearurbackend.jwt.JWTUtil;
-import com.example.hearurbackend.repository.RefreshRepository;
-import com.example.hearurbackend.service.AuthService;
+import com.example.hearurbackend.domain.auth.repository.RefreshRepository;
+import com.example.hearurbackend.domain.user.service.AuthService;
 import io.jsonwebtoken.ExpiredJwtException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Arrays;
 
 @RestController("/api/v1")
 @RequiredArgsConstructor

@@ -1,12 +1,11 @@
 package com.example.hearurbackend.jwt;
 
-import com.example.hearurbackend.domain.UserRole;
-import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
-import com.example.hearurbackend.dto.user.UserDto;
+import com.example.hearurbackend.domain.user.type.UserRole;
+import com.example.hearurbackend.domain.oauth.dto.CustomOAuth2User;
+import com.example.hearurbackend.domain.user.dto.UserDto;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

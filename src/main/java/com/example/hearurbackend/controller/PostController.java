@@ -1,12 +1,12 @@
 package com.example.hearurbackend.controller;
 
-import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
-import com.example.hearurbackend.dto.post.PostRequestDto;
-import com.example.hearurbackend.dto.post.PostResponseDto;
+import com.example.hearurbackend.domain.oauth.dto.CustomOAuth2User;
+import com.example.hearurbackend.domain.community.dto.PostRequestDto;
+import com.example.hearurbackend.domain.community.dto.PostResponseDto;
 
-import com.example.hearurbackend.entity.community.Post;
-import com.example.hearurbackend.service.PostService;
-import com.example.hearurbackend.service.S3Uploader;
+import com.example.hearurbackend.domain.community.entity.Post;
+import com.example.hearurbackend.domain.community.service.PostService;
+import com.example.hearurbackend.domain.util.S3Uploader;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

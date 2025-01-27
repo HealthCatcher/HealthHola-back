@@ -5,9 +5,9 @@ import com.example.hearurbackend.jwt.JWTFilter;
 import com.example.hearurbackend.jwt.JWTUtil;
 import com.example.hearurbackend.oauth2.CustomClientRegistrationRepo;
 import com.example.hearurbackend.oauth2.CustomSuccessHandler;
-import com.example.hearurbackend.repository.RefreshRepository;
+import com.example.hearurbackend.domain.auth.repository.RefreshRepository;
 import com.example.hearurbackend.security.LoginFilter;
-import com.example.hearurbackend.service.CustomOAuth2UserService;
+import com.example.hearurbackend.domain.oauth.service.CustomOAuth2UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -24,7 +24,6 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @Configuration

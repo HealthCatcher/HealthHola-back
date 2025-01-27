@@ -1,9 +1,9 @@
 package com.example.hearurbackend.controller;
 
-import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
-import com.example.hearurbackend.dto.survey.CreateQuestionRequestDto;
-import com.example.hearurbackend.dto.survey.QuestionResponseDto;
-import com.example.hearurbackend.service.SurveyService;
+import com.example.hearurbackend.domain.oauth.dto.CustomOAuth2User;
+import com.example.hearurbackend.domain.survey.dto.CreateQuestionRequestDto;
+import com.example.hearurbackend.domain.survey.dto.QuestionResponseDto;
+import com.example.hearurbackend.domain.survey.service.SurveyService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

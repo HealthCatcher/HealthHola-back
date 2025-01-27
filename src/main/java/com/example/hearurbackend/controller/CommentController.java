@@ -1,10 +1,9 @@
 package com.example.hearurbackend.controller;
 
-import com.example.hearurbackend.dto.comment.CommentRequestDto;
-import com.example.hearurbackend.dto.comment.CommentResponseDto;
-import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
-import com.example.hearurbackend.entity.community.Comment;
-import com.example.hearurbackend.service.CommentService;
+import com.example.hearurbackend.domain.community.dto.CommentRequestDto;
+import com.example.hearurbackend.domain.oauth.dto.CustomOAuth2User;
+import com.example.hearurbackend.domain.community.entity.Comment;
+import com.example.hearurbackend.domain.community.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

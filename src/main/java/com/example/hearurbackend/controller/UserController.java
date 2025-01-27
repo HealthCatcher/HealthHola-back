@@ -1,10 +1,10 @@
 package com.example.hearurbackend.controller;
 
-import com.example.hearurbackend.dto.experience.NoticeResponseDto;
-import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
-import com.example.hearurbackend.dto.user.AddressDto;
-import com.example.hearurbackend.dto.user.UserDto;
-import com.example.hearurbackend.service.UserService;
+import com.example.hearurbackend.domain.experience.dto.NoticeResponseDto;
+import com.example.hearurbackend.domain.oauth.dto.CustomOAuth2User;
+import com.example.hearurbackend.domain.user.dto.AddressDto;
+import com.example.hearurbackend.domain.user.dto.UserDto;
+import com.example.hearurbackend.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

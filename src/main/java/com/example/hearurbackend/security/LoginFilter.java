@@ -1,12 +1,11 @@
 package com.example.hearurbackend.security;
 
-import com.example.hearurbackend.dto.auth.LoginDto;
-import com.example.hearurbackend.entity.RefreshEntity;
+import com.example.hearurbackend.domain.auth.dto.LoginDto;
+import com.example.hearurbackend.domain.auth.entity.RefreshEntity;
 import com.example.hearurbackend.jwt.JWTUtil;
-import com.example.hearurbackend.repository.RefreshRepository;
+import com.example.hearurbackend.domain.auth.repository.RefreshRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;

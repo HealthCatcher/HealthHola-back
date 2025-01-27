@@ -1,8 +1,8 @@
 package com.example.hearurbackend.controller;
 
-import com.example.hearurbackend.dto.admin.SuspendUserDto;
-import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
-import com.example.hearurbackend.service.AdminService;
+import com.example.hearurbackend.domain.user.dto.admin.SuspendUserDto;
+import com.example.hearurbackend.domain.oauth.dto.CustomOAuth2User;
+import com.example.hearurbackend.domain.user.service.AdminService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -1,11 +1,10 @@
 package com.example.hearurbackend.controller;
 
-import com.example.hearurbackend.dto.auth.*;
-import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
-import com.example.hearurbackend.dto.user.RegisterUserDto;
-import com.example.hearurbackend.dto.user.UserDto;
-import com.example.hearurbackend.entity.user.User;
-import com.example.hearurbackend.service.AuthService;
+import com.example.hearurbackend.domain.auth.dto.*;
+import com.example.hearurbackend.domain.oauth.dto.CustomOAuth2User;
+import com.example.hearurbackend.domain.user.dto.RegisterUserDto;
+import com.example.hearurbackend.domain.user.entity.User;
+import com.example.hearurbackend.domain.user.service.AuthService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.mail.MessagingException;
@@ -17,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;

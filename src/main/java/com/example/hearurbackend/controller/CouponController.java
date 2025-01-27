@@ -1,9 +1,9 @@
 package com.example.hearurbackend.controller;
 
-import com.example.hearurbackend.dto.coupon.CouponRequestDto;
-import com.example.hearurbackend.dto.coupon.CouponResponseDto;
-import com.example.hearurbackend.dto.oauth.CustomOAuth2User;
-import com.example.hearurbackend.service.CouponService;
+import com.example.hearurbackend.domain.coupon.dto.CouponRequestDto;
+import com.example.hearurbackend.domain.coupon.dto.CouponResponseDto;
+import com.example.hearurbackend.domain.oauth.dto.CustomOAuth2User;
+import com.example.hearurbackend.domain.coupon.service.CouponService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
