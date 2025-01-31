@@ -1,6 +1,7 @@
 package com.example.hearurbackend.domain.user.entity;
 
 import com.example.hearurbackend.domain.report.entity.Report;
+import com.example.hearurbackend.domain.survey.entity.UserResponse;
 import com.example.hearurbackend.domain.user.type.UserRole;
 import com.example.hearurbackend.domain.community.entity.Comment;
 import com.example.hearurbackend.domain.community.entity.Like;
@@ -74,8 +75,11 @@ public class User {
     private Address address;
     private Boolean isRegistered;
 
-    @OneToMany(mappedBy = "reporter", cascade = CascadeType.ALL, orphanRemoval = false)
+    @OneToMany(mappedBy = "reporter", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Report> reports = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserResponse> userResponses = new ArrayList<>();
 
     public User(String username, String password, String name, String email, UserRole role, String nickname) {
         this.username = username;
