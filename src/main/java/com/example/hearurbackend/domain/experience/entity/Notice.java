@@ -52,7 +52,7 @@ public class Notice {
     @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Report> reports = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "favoriteNotices")
+    @ManyToMany(mappedBy = "favoriteNotices", cascade = CascadeType.ALL)
     private Set<User> favoriteUsers = new HashSet<>();
 
 
