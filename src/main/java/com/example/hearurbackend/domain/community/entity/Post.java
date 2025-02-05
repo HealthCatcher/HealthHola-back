@@ -43,7 +43,7 @@ public class Post {
     private List<Report> reports = new ArrayList<>();
 
     @Builder
-    public Post(String category, String title, String content, String author, LocalDateTime createDate, LocalDateTime updateDate, boolean isUpdated) {
+    public Post(String category, String title, String content, String author, LocalDateTime createDate, LocalDateTime updateDate, boolean isUpdated, User user) {
         this.category = category;
         this.title = title;
         this.content = content;
@@ -51,6 +51,7 @@ public class Post {
         this.createDate = createDate;
         this.updateDate = updateDate;
         this.isUpdated = isUpdated;
+        this.user = user;
     }
 
     public void updatePost(String newTitle, String newContent) {

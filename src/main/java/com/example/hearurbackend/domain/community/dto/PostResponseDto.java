@@ -13,6 +13,7 @@ public class PostResponseDto {
     private final String title;
     private final String content;
     private final String author;
+    private final String authorId;
     private final LocalDateTime createDate;
     private final LocalDateTime updateDate;
     private final boolean isUpdated;
@@ -23,6 +24,7 @@ public class PostResponseDto {
     private final boolean isLiked;
     private final List<String> imageUrls;
     private final boolean isReported;
+    private final boolean isBlocked;
 
     @Builder
     public PostResponseDto(
@@ -31,6 +33,7 @@ public class PostResponseDto {
             String title,
             String content,
             String author,
+            String authorId,
             LocalDateTime createDate,
             LocalDateTime updateDate,
             boolean isUpdated,
@@ -40,12 +43,15 @@ public class PostResponseDto {
             int commentsCount,
             boolean isLiked,
             List<String> imageUrls,
-            boolean isReported) {
+            boolean isReported,
+            boolean isBlocked
+    ) {
         this.no = no;
         this.category = category;
         this.title = title;
         this.content = content;
         this.author = author;
+        this.authorId = authorId;
         this.createDate = createDate;
         this.updateDate = updateDate;
         this.isUpdated = isUpdated;
@@ -56,5 +62,6 @@ public class PostResponseDto {
         this.isLiked = isLiked;
         this.imageUrls = imageUrls;
         this.isReported = isReported;
+        this.isBlocked = isBlocked;
     }
 }

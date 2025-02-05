@@ -3,6 +3,7 @@ package com.example.hearurbackend.domain.user.service;
 import com.example.hearurbackend.domain.experience.dto.NoticeResponseDto;
 import com.example.hearurbackend.domain.user.dto.AddressDto;
 import com.example.hearurbackend.domain.experience.entity.Notice;
+import com.example.hearurbackend.domain.user.dto.BlockUserDto;
 import com.example.hearurbackend.domain.user.entity.Address;
 import com.example.hearurbackend.domain.user.entity.User;
 import com.example.hearurbackend.domain.user.repository.AddressRepository;
@@ -120,5 +121,26 @@ public class UserService {
             return null;
         }
         return new AddressDto(address.getAddress(), address.getDetailAddress(), address.getZoneCode());
+    }
+
+    public void blockUser(String me, String you) {
+        User meUser = userRepository.findById(me).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        User youUser = userRepository.findById(you).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        meUser.blockUser(youUser);
+        userRepository.save(meUser);
+    }
+
+    public void unblockUser(String username, String username1) {
+        User meUser = userRepository.findById(username).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        User youUser = userRepository.findById(username1).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        meUser.unblockUser(youUser);
+        userRepository.save(meUser);
+    }
+
+    public List<BlockUserDto> getBlockedUserList(String username) {
+        User user = userRepository.findById(username).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        return user.getBlockedUsers().stream()
+                .map(blockedUser -> new BlockUserDto(blockedUser.getUsername()))
+                .collect(Collectors.toList());
     }
 }

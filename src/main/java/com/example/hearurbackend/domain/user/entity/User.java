@@ -180,4 +180,12 @@ public class User {
         this.favoriteNotices.clear();
         this.blockedUsers.clear();
     }
+
+    public void blockUser(User youUser) {
+        this.blockedUsers.add(youUser);
+    }
+
+    public void unblockUser(User youUser) {
+        this.blockedUsers.remove(youUser);
+    }
 }

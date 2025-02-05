@@ -50,14 +50,17 @@ public class PostService {
     private PostResponseDto createPostResponseDto(Post post, CustomOAuth2User auth) {
         String authorNickname = getAuthorNickname(post.getAuthor());
         boolean isLiked = checkPostLikedByUser(post, auth);
-        List<CommentResponseDto> commentDTOList = createCommentDtoList(post.getComments());
+        List<CommentResponseDto> commentDTOList = createCommentDtoList(post.getComments(), auth);
         boolean isReported = checkPostReported(post);
-
+        User user = userService.getUser(auth.getUsername()).orElse(null);
+        User author = userService.getUser(post.getAuthor()).orElse(null);
+        boolean isBlocked = checkBlockedUser(author, user);
         return PostResponseDto.builder()
                 .no(post.getNo())
                 .category(post.getCategory())
                 .title(post.getTitle())
                 .author(authorNickname)
+                .authorId(post.getAuthor())
                 .createDate(post.getCreateDate())
                 .updateDate(post.getUpdateDate())
                 .isUpdated(post.isUpdated())
@@ -68,9 +71,13 @@ public class PostService {
                 .isLiked(isLiked)
                 .imageUrls(post.getImageUrl())
                 .isReported(isReported)
+                .isBlocked(isBlocked)
                 .build();
     }
 
+    private boolean checkBlockedUser(User author, User user) {
+        return user != null && user.getBlockedUsers().contains(author);
+    }
 
     @Transactional
     public boolean checkPostReported(Post post) {
@@ -90,20 +97,27 @@ public class PostService {
                 .orElse(false);
     }
 
-    private List<CommentResponseDto> createCommentDtoList(List<Comment> comments) {
+    private List<CommentResponseDto> createCommentDtoList(List<Comment> comments, CustomOAuth2User auth) {
         Map<UUID, CommentResponseDto> commentMap = new HashMap<>();
         List<CommentResponseDto> result = new ArrayList<>();
+
         // 먼저 모든 댓글을 DTO로 변환하고 맵에 저장
         for (Comment comment : comments) {
+            User author = userService.getUser(comment.getAuthor()).orElseThrow(
+                    () -> new EntityNotFoundException("User not found with id: " + comment.getAuthor()));
+            User user = userService.getUser(auth.getUsername()).orElse(null);
+
             CommentResponseDto dto = new CommentResponseDto(
                     comment.getId(),
                     comment.getParentComment() != null ? comment.getParentComment().getId() : null,
                     getAuthorNickname(comment.getAuthor()),
+                    comment.getAuthor(),
                     comment.getContent(),
                     comment.getCreateDate(),
                     comment.isUpdated(),
                     new ArrayList<>(),
-                    commentService.checkCommentReported(comment)
+                    commentService.checkCommentReported(comment),
+                    checkBlockedUser(author, user)
             );
             commentMap.put(comment.getId(), dto);
             if (comment.getParentComment() == null) {
@@ -126,6 +140,9 @@ public class PostService {
     @Transactional
     public Post createPost(PostRequestDto postDTO, String username) {
         LocalDateTime now = LocalDateTime.now();
+        User user = userService.getUser(username).orElseThrow(
+                () -> new EntityNotFoundException("User not found with id: " + username));
+
         Post post = Post.builder()
                 .title(postDTO.getTitle())
                 .category(postDTO.getCategory())
@@ -134,6 +151,7 @@ public class PostService {
                 .createDate(now)
                 .updateDate(now)
                 .isUpdated(false)
+                .user(user)
                 .build();
         return postRepository.save(post);
     }

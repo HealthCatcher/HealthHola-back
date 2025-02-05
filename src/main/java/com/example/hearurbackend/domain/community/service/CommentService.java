@@ -5,6 +5,7 @@ import com.example.hearurbackend.domain.community.entity.Comment;
 import com.example.hearurbackend.domain.community.entity.Post;
 import com.example.hearurbackend.domain.community.repository.CommentRepository;
 import com.example.hearurbackend.domain.community.repository.PostRepository;
+import com.example.hearurbackend.domain.user.entity.User;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -72,7 +73,7 @@ public class CommentService {
     }
 
     @Transactional
-    public boolean checkCommentReported(Comment comments) {
-        return !comments.getReports().isEmpty();
+    public boolean checkCommentReported(Comment comment) {
+        return !comment.getReports().isEmpty();
     }
 }
