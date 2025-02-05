@@ -42,9 +42,10 @@ public class Coupon {
         this.isUsed = true;
         this.usedAt = LocalDateTime.now();
     }
-    public Coupon(String code, LocalDateTime expirationDate){
+    public Coupon(String code, LocalDateTime expirationDate, CouponType type){
         this.code = code;
         this.expirationDate = expirationDate;
+        this.type = type;
         this.isUsed = false;
     }
 }

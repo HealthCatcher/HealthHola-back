@@ -56,7 +56,7 @@ public class CouponService {
         }
         log.info("쿠폰 추가 요청 getCode{}", couponDto.getCouponCode());
         log.info("쿠폰 추가 요청 getExpirationDate{}", couponDto.getExpirationDate());
-        Coupon coupon = new Coupon(couponDto.getCouponCode(), couponDto.getExpirationDate());
+        Coupon coupon = new Coupon(couponDto.getCouponCode(), couponDto.getExpirationDate(), couponDto.getType());
         couponRepository.save(coupon);
     }
 
