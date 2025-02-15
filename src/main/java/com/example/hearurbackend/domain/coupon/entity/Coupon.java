@@ -38,8 +38,9 @@ public class Coupon {
     }
     // 기타 Getter 및 Setter
 
-    public void useCoupon(){
+    public void useCoupon(User user){
         this.isUsed = true;
+        this.user = user;
         this.usedAt = LocalDateTime.now();
     }
     public Coupon(String code, LocalDateTime expirationDate, CouponType type){

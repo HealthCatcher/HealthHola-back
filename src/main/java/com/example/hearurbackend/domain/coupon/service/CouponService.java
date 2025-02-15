@@ -43,7 +43,7 @@ public class CouponService {
                 user.usePriorityCoupon();
                 break;
         }
-        coupon.useCoupon();
+        coupon.useCoupon(user);
         userRepository.save(user);
         couponRepository.save(coupon);
     }
