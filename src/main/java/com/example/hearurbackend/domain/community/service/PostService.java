@@ -48,6 +48,7 @@ public class PostService {
     }
 
     private PostResponseDto createPostResponseDto(Post post, CustomOAuth2User auth) {
+        List<CommentResponseDto> commentDTOList = createCommentDtoList(post.getComments(), auth);
         if (auth==null){
             return PostResponseDto.builder()
                     .no(post.getNo())
@@ -59,7 +60,7 @@ public class PostService {
                     .updateDate(post.getUpdateDate())
                     .isUpdated(post.isUpdated())
                     .content(post.getContent())
-                    .comments(new ArrayList<>())
+                    .comments(commentDTOList)
                     .views(post.getViews())
                     .likes(post.getLikesCount())
                     .isLiked(false)
@@ -70,7 +71,6 @@ public class PostService {
         }
         String authorNickname = getAuthorNickname(post.getAuthor());
         boolean isLiked = checkPostLikedByUser(post, auth);
-        List<CommentResponseDto> commentDTOList = createCommentDtoList(post.getComments(), auth);
         boolean isReported = checkPostReported(post);
         User user = userService.getUser(auth.getUsername()).orElse(null);
         User author = userService.getUser(post.getAuthor()).orElse(null);
