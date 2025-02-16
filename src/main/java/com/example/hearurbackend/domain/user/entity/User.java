@@ -38,13 +38,8 @@ public class User {
     private String gender;
     private int point;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(
-            name = "user_blocked_users",
-            joinColumns = @JoinColumn(name = "userId"),
-            inverseJoinColumns = @JoinColumn(name = "blockedUserId")
-    )
-    private Set<User> blockedUsers = new HashSet<>();
+    @OneToMany(mappedBy = "blocker", cascade = CascadeType.ALL)
+    private Set<Block> blocks = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = false)
     private List<Post> posts = new ArrayList<>();
@@ -178,14 +173,15 @@ public class User {
     }
     public void withdrawUser() {
         this.favoriteNotices.clear();
-        this.blockedUsers.clear();
+        this.blocks.clear();
     }
 
     public void blockUser(User youUser) {
-        this.blockedUsers.add(youUser);
+        Block block = new Block(this, youUser);
+        this.blocks.add(block);
     }
 
-    public void unblockUser(User youUser) {
-        this.blockedUsers.remove(youUser);
+    public void unblockUser(User blockedUser) {
+        this.blocks.removeIf(block -> block.getBlocked().equals(blockedUser));
     }
 }

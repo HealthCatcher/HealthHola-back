@@ -123,7 +123,9 @@ public class UserService {
         return new AddressDto(address.getAddress(), address.getDetailAddress(), address.getZoneCode());
     }
 
+    @Transactional
     public void blockUser(String me, String you) {
+        log.info("me: {}, you: {}", me, you);
         User meUser = userRepository.findById(me).orElseThrow(() -> new EntityNotFoundException("User not found"));
         User youUser = userRepository.findById(you).orElseThrow(() -> new EntityNotFoundException("User not found"));
         meUser.blockUser(youUser);
@@ -139,8 +141,8 @@ public class UserService {
 
     public List<BlockUserDto> getBlockedUserList(String username) {
         User user = userRepository.findById(username).orElseThrow(() -> new EntityNotFoundException("User not found"));
-        return user.getBlockedUsers().stream()
-                .map(blockedUser -> new BlockUserDto(blockedUser.getUsername()))
+        return user.getBlocks().stream()
+                .map(block -> new BlockUserDto(block.getBlocked().getUsername()))
                 .collect(Collectors.toList());
     }
 }

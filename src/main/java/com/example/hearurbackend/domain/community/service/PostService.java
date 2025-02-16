@@ -79,7 +79,8 @@ public class PostService {
     }
 
     private boolean checkBlockedUser(User author, User user) {
-        return user != null && user.getBlockedUsers().contains(author);
+        return user != null && user.getBlocks().stream()
+                .anyMatch(block -> block.getBlocked().equals(author));
     }
 
     @Transactional
