@@ -48,6 +48,26 @@ public class PostService {
     }
 
     private PostResponseDto createPostResponseDto(Post post, CustomOAuth2User auth) {
+        if (auth==null){
+            return PostResponseDto.builder()
+                    .no(post.getNo())
+                    .category(post.getCategory())
+                    .title(post.getTitle())
+                    .author(getAuthorNickname(post.getAuthor()))
+                    .authorId(post.getAuthor())
+                    .createDate(post.getCreateDate())
+                    .updateDate(post.getUpdateDate())
+                    .isUpdated(post.isUpdated())
+                    .content(post.getContent())
+                    .comments(new ArrayList<>())
+                    .views(post.getViews())
+                    .likes(post.getLikesCount())
+                    .isLiked(false)
+                    .imageUrls(post.getImageUrl())
+                    .isReported(false)
+                    .isBlocked(false)
+                    .build();
+        }
         String authorNickname = getAuthorNickname(post.getAuthor());
         boolean isLiked = checkPostLikedByUser(post, auth);
         List<CommentResponseDto> commentDTOList = createCommentDtoList(post.getComments(), auth);
