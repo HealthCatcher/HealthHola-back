@@ -104,13 +104,14 @@ public class PostService {
     private List<CommentResponseDto> createCommentDtoList(List<Comment> comments, CustomOAuth2User auth) {
         Map<UUID, CommentResponseDto> commentMap = new HashMap<>();
         List<CommentResponseDto> result = new ArrayList<>();
-
+        User user = null;
+        if(auth!=null) {
+            user = userService.getUser(auth.getUsername()).orElse(null);
+        }
         // 먼저 모든 댓글을 DTO로 변환하고 맵에 저장
         for (Comment comment : comments) {
             User author = userService.getUser(comment.getAuthor()).orElseThrow(
                     () -> new EntityNotFoundException("User not found with id: " + comment.getAuthor()));
-            User user = userService.getUser(auth.getUsername()).orElse(null);
-
             CommentResponseDto dto = new CommentResponseDto(
                     comment.getId(),
                     comment.getParentComment() != null ? comment.getParentComment().getId() : null,
