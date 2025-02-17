@@ -182,6 +182,6 @@ public class User {
     }
 
     public void unblockUser(User blockedUser) {
-        this.blocks.removeIf(block -> block.getBlocked().equals(blockedUser));
+        this.blocks.removeIf(block -> block.getBlocked().getUsername().equals(blockedUser.getUsername()));
     }
 }

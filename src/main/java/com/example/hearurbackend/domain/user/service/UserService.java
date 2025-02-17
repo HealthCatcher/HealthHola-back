@@ -5,8 +5,10 @@ import com.example.hearurbackend.domain.user.dto.AddressDto;
 import com.example.hearurbackend.domain.experience.entity.Notice;
 import com.example.hearurbackend.domain.user.dto.BlockUserDto;
 import com.example.hearurbackend.domain.user.entity.Address;
+import com.example.hearurbackend.domain.user.entity.Block;
 import com.example.hearurbackend.domain.user.entity.User;
 import com.example.hearurbackend.domain.user.repository.AddressRepository;
+import com.example.hearurbackend.domain.user.repository.BlockRepository;
 import com.example.hearurbackend.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,6 +27,7 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
+    private final BlockRepository blockRepository;
 
     public Optional<User> getUser(String username) {
         return userRepository.findById(username);
@@ -132,11 +136,14 @@ public class UserService {
         userRepository.save(meUser);
     }
 
-    public void unblockUser(String username, String username1) {
-        User meUser = userRepository.findById(username).orElseThrow(() -> new EntityNotFoundException("User not found"));
-        User youUser = userRepository.findById(username1).orElseThrow(() -> new EntityNotFoundException("User not found"));
-        meUser.unblockUser(youUser);
-        userRepository.save(meUser);
+    @Transactional
+    public void unblockUser(String me, String you) {
+        User meUser = userRepository.findById(me).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        User youUser = userRepository.findById(you).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        Block block = blockRepository.findByBlockerAndBlocked(meUser, youUser)
+                .orElseThrow(() -> new EntityNotFoundException("Block not found"));
+
+        blockRepository.delete(block);
     }
 
     public List<BlockUserDto> getBlockedUserList(String username) {
